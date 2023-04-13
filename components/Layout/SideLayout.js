@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
-  ArchiveIcon,
+  ArchiveIcon, ExclamationCircleIcon,
   FolderIcon,
   HomeIcon,
   MenuIcon,
@@ -13,10 +13,15 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 import CreateTicketModal from "../CreateTicketModal";
+import {IdentificationIcon, PencilIcon, UserCircleIcon} from "@heroicons/react/solid";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
+
+const isCurrentPath = (path) => {
+  return location.pathname === path;
+};
 
 export default function SideLayout({ children }) {
   const location = useRouter();
@@ -33,13 +38,18 @@ export default function SideLayout({ children }) {
     alert("You do not have the correct perms for that action.");
   }
 
+  const navigationPaths = {
+    dashboard: "/",
+    openTickets: "/ticket",
+    allTickets: "/history",
+    notebook: "/notebook",
+  }
+
+  const administrationNavigationPaths = {
+    users: "/admin/users"
+  }
+
   const navigation = [
-    {
-      name: "Dashboard",
-      href: "/",
-      icon: HomeIcon,
-      current: location.pathname === "/" ? true : false,
-    },
     {
       name: "Tickets",
       href: "/ticket",
@@ -110,7 +120,7 @@ export default function SideLayout({ children }) {
                 leaveFrom="translate-x-0"
                 leaveTo="-translate-x-full"
               >
-                <div className="relative flex-1 flex flex-col max-w-xs w-full bg-gray-900">
+                <div className="relative flex-1 flex flex-col max-w-xs w-full bg-blue-500">
                   <Transition.Child
                     as={Fragment}
                     enter="ease-in-out duration-300"
@@ -238,126 +248,88 @@ export default function SideLayout({ children }) {
             </Dialog>
           </Transition.Root>
 
-          {/* Static sidebar for desktop */}
+          {/* Sidebar for desktop and big screen devices... */}
           <div className="hidden lg:flex md:flex-shrink-0">
             <div className="flex flex-col w-64">
-              {/* Sidebar component, swap this element with another sidebar if you like */}
-              <div className="flex flex-col h-0 flex-1 bg-gray-900">
+              <div className="flex flex-col h-0 flex-1 bg-emerald-800">
                 <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                   <div className="flex flex-shrink-0 px-4 align-middle flex-row">
-                    <img
-                      className="h-8 w-auto"
-                      src="/logo.svg"
-                      alt="Workflow"
-                    />
-                    <Link href="https://peppermint.sh">
+                    <img className="h-8 w-auto" src="/logo.png" alt="Workflow"/>
+                    <Link href="https://github.com/AntonSk98/Gnomepy">
                       <a target="_blank" rel="noreferrer">
-                        <h1 className="text-2xl ml-2 hover:text-green-600 font-extrabold text-white">
-                          Peppermint
-                        </h1>
+                        <h1 className="text-2xl ml-2 hover:text-green-600 font-extrabold text-white duration-300">Gnomepy</h1>
                       </a>
                     </Link>
                   </div>
-                  <nav className="mt-5 flex-1 px-2 bg-gray-900 space-y-1">
+                  <nav className="mt-5 flex-1 px-2 space-y-1">
                     <CreateTicketModal />
-                    {navigation.map((item) => (
-                      <Link key={item.name} href={item.href}>
-                        <a
-                          className={classNames(
-                            item.current
-                              ? "bg-green-500 text-white hover:text-white"
-                              : "text-white hover:bg-green-400 hover:text-white",
-                            "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-                          )}
-                        >
-                          <item.icon
-                            className={classNames(
-                              "text-white mr-3 flex-shrink-0 h-6 w-6"
-                            )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </a>
-                      </Link>
-                    ))}
-                  </nav>
-                  <div
-                    className={
-                      session.user.isAdmin ? "mt-8" : "hidden"
-                    }
-                  >
-                    <h3
-                      className="px-3 text-xs font-semibold text-white uppercase tracking-wider"
-                      id="projects-headline"
-                    >
-                      Admin
-                    </h3>
-                    <div
-                      className="mt-1 space-y-1"
-                      aria-labelledby="projects-headline"
-                    >
-                      {secondaryNavigation.map((item) => (
-                        <Link key={item.name} href={item.href}>
-                          <a className="group flex items-center px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-green-400 hover:text-white">
-                            <span className="truncate">{item.name}</span>
-                          </a>
-                        </Link>
-                      ))}
-                      <a
-                        href="https://ko-fi.com/L3L0AA4YE"
-                        target="_blank"
-                        passHref
-                      >
-                        <img
-                          className="px-3 py-2 h-12"
-                          height="36"
-                          src="/kofi-white.png"
-                          border="0"
-                          alt="Buy Me a Coffee at ko-fi.com"
-                        />
-                      </a>
-                      <div className="px-3 py-2">
-                        <span className="text-white">
-                          Version -{" "}
-                          <a target='_blank' href="https://github.com/Peppermint-Lab/peppermint/releases">
-                            <a>
-                              <span className="inline-flex ml-2 items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-white text-green-800 pointer pointer-events-auto">
-                                <svg
-                                  className="-ml-0.5 mr-1.5 h-2 w-2 text-green-400"
-                                  fill="currentColor"
-                                  viewBox="0 0 8 8"
-                                >
-                                  <circle cx={4} cy={4} r={3} />
-                                </svg>
-                                {process.env.NEXT_PUBLIC_VERSION}
-                              </span>
-                            </a>
-                          </a>
-                        </span>
+
+                    <Link href={navigationPaths.dashboard}>
+                      <div className={isCurrentPath(navigationPaths.dashboard) ? "bg-green-600 rounded-md" : ""}>
+                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                          <IdentificationIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></IdentificationIcon>
+                          Dashboard
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    </Link>
+
+                    <Link href={navigationPaths.openTickets}>
+                      <div className={isCurrentPath(navigationPaths.openTickets) ? "bg-green-600 rounded-md" : ""}>
+                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                          <ExclamationCircleIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></ExclamationCircleIcon>
+                          Pending issues
+                        </div>
+                      </div>
+                    </Link>
+
+                    <Link href={navigationPaths.allTickets}>
+                      <div className={isCurrentPath(navigationPaths.allTickets) ? "bg-green-600 rounded-md" : ""}>
+                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                          <ArchiveIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></ArchiveIcon>
+                          All issues
+                        </div>
+                      </div>
+                    </Link>
+
+                    <Link href={navigationPaths.notebook}>
+                      <div className={isCurrentPath(navigationPaths.notebook) ? "bg-green-600 rounded-md" : ""}>
+                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                          <PencilIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></PencilIcon>
+                          Notes
+                        </div>
+                      </div>
+                    </Link>
+
+                    {session.user.isAdmin ? (
+                        <Link href={administrationNavigationPaths.users}>
+                          <div className={isCurrentPath(administrationNavigationPaths.users) ? "bg-green-600 rounded-md" : ""}>
+                            <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                              <UserCircleIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></UserCircleIcon>
+                              User management
+                            </div>
+                          </div>
+                        </Link>
+                    ) : null}
+                  </nav>
                 </div>
-                <div className="flex-shrink-0 flex border-t border-gray-900 p-4">
+                <div className="flex-shrink-0 flex border-t-2 p-4">
                   <div className="flex-shrink-0 w-full group block">
                     <div className="flex items-center">
                       <div>
-                        <span className="hidden sm:inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-500">
+                        <span className="hidden sm:inline-flex items-center justify-center h-8 w-8 rounded-full bg-green-600">
                           <span className="text-sm font-medium leading-none text-white uppercase">
                             {session.user.name[0]}
                           </span>
                         </span>
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-white">
-                          {session.user.name}
-                        </p>
+                        <div className="text-lg font-medium text-white cursor-default pb-2">
+                          Logged in as <span className="font-bold text-green-600">{session.user.name}</span>
+                        </div>
                         <Link href="/settings">
-                          <a href="/settings">
-                            <p className="text-xs font-medium text-white group-hover:text-green-400">
+                          <span className="text-base font-medium text-white hover:text-green-600 duration-300 cursor-pointer">
                               View profile
-                            </p>
-                          </a>
+                          </span>
                         </Link>
                       </div>
                     </div>
