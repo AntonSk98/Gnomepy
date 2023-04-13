@@ -4,12 +4,7 @@ export default async function getUnissued(req,res) {
   try {
     await prisma.ticket
       .findMany({
-        where: { isIssued: false },
-        include: {
-          client: {
-            select: { id: true, name: true },
-          },
-        },
+        where: { isIssued: false }
       })
       .then((tickets) => {
         res.status(200).json({ tickets });

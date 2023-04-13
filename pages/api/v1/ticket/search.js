@@ -10,9 +10,6 @@ export default async function transferTicket(req,res) {
             id: Number(req.params.id),
           },
           include: {
-            client: {
-              select: { id: true, name: true, number: true },
-            },
             assignedTo: {
               select: { id: true, name: true },
             },

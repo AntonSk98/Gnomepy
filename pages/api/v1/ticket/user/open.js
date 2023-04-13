@@ -9,9 +9,6 @@ export default async function userOpen(req, res) {
       .findMany({
         where: { userId: Number(session.id), isComplete: false },
         include: {
-          client: {
-            select: { id: true, name: true, number: true },
-          },
           assignedTo: {
             select: { id: true, name: true },
           },
