@@ -9,7 +9,6 @@ import MDEditor from "@uiw/react-md-editor";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import TicketFiles from "../TicketFiles";
-import ClientNotesModal from "../ClientNotesModal";
 import TransferTicket from "../TransferTicket";
 
 export default function TicketDetail(props) {
@@ -133,9 +132,7 @@ export default function TicketDetail(props) {
                         }
                       />
                       <p className="mt-2 text-sm font-bold">
-                        opened by user: {ticket.name} from client:{" "}
-                        {ticket.client.name}
-                      </p>
+                        opened by user: {ticket.name}</p>
                     </div>
                   </div>
 
@@ -257,15 +254,9 @@ export default function TicketDetail(props) {
                               clipRule="evenodd"
                             />
                           </svg>
-                          <span>Un-complete</span>
+                          <span>Reopen</span>
                         </button>
                       )}
-                    </div>
-                    <div className="mt-4 flex space-x-3 md:mt-0">
-                      <ClientNotesModal
-                        notes={props.ticket.client.notes}
-                        id={props.ticket.client.id}
-                      />
                     </div>
                     <div className="mt-4 flex space-x-3 md:mt-0">
                       <TransferTicket id={props.ticket.id} />
@@ -485,7 +476,6 @@ export default function TicketDetail(props) {
                   <div className="flex flex-col">
                     <span>Name - {ticket.name}</span>
                     <span>Email - {ticket.email} </span>
-                    <span>Number - {ticket.client.number} </span>
                   </div>
                 </div>
               </div>
@@ -605,7 +595,6 @@ export default function TicketDetail(props) {
                   <div className="flex flex-col">
                     <span>Name - {ticket.name}</span>
                     <span>Email - {ticket.email} </span>
-                    <span>Number - {ticket.client.number} </span>
                   </div>
                 </div>
               </div>
