@@ -7,12 +7,12 @@ import {
   useGlobalFilter,
   usePagination,
 } from "react-table";
-import ClientNotesModal from "../../components/ClientNotesModal";
-import CreateClient from "../../components/CreateClientModal";
-import UpdateClientModal from "../../components/UpdateClientModal";
+import ResetPassword from "../../components/ResetPassword";
+import CreateUser from "../../components/CreateUserModal";
+import UpdateUserModal from "../../components/UpdateUserModal";
 
-const fetchAllClients = async () => {
-  const res = await fetch("/api/v1/clients/all");
+const fetchUsers = async () => {
+  const res = await fetch("/api/v1/users/all");
   return res.json();
 };
 
@@ -190,40 +190,38 @@ function Table({ columns, data }) {
   );
 }
 
-export default function Clients() {
-  const { data, status, refetch } = useQuery(
-    "fetchAllClients",
-    fetchAllClients
-  );
+export default function Users() {
+  const { data, status, refetch } = useQuery("fetchAuthUsers", fetchUsers);
 
-  //   async function deleteClient(id) {
-  //     try {
-  //       await fetch(`/api/v1/clients/${id}/delete-client`, {
-  //         method: "DELETE",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       })
-  //         .then((response) => response.json())
-  //         .then(() => {
-  //           refetch;
-  //         });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
+  async function deleteClient(client) {
+    const id = client.id;
+    try {
+      await fetch(`/api/v1/auth/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then(() => {
+          refetch;
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const columns = React.useMemo(() => [
     {
-      Header: "Client Name",
+      Header: "Name",
       accessor: "name",
       width: 10,
-      id: "client_name",
+      id: "name",
     },
     {
-      Header: "Contact Name",
-      accessor: "contactName",
-      id: "contactName",
+      Header: "Email",
+      accessor: "email",
+      id: "email",
     },
     {
       Header: "",
@@ -231,8 +229,19 @@ export default function Clients() {
       Cell: ({ row, value }) => {
         return (
           <div className="space-x-4 flex flex-row">
-            <UpdateClientModal client={row.original} />
-            <ClientNotesModal notes={row.original.notes} id={row.original.id} />
+            <UpdateUserModal user={row.original} />
+            <ResetPassword user={row.original} />
+            {/* <Popconfirm
+              title="Are you sure you want to delete?"
+              onConfirm={() => deleteClient(row.cells[0].value)}
+            >
+              <button
+                type="button"
+                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Delete
+              </button>
+            </Popconfirm> */}
           </div>
         );
       },
@@ -247,9 +256,11 @@ export default function Clients() {
       >
         <div className="py-6">
           <div className="flex flex-row max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <h1 className="text-2xl font-semibold text-gray-900">Clients</h1>
-            <div className="ml-3">
-              <CreateClient />
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Internal Users
+            </h1>
+            <div className="ml-4">
+              <CreateUser />
             </div>
           </div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
@@ -272,37 +283,47 @@ export default function Clients() {
               {status === "success" && (
                 <div>
                   <div className="hidden sm:block">
-                    <Table columns={columns} data={data.clients} />
+                    <Table columns={columns} data={data.users} />
                   </div>
-
                   <div className="sm:hidden">
-                    {data.clients.map((client) => (
+                    {data.users.map((user) => (
                       <div
-                        key={client.id}
+                        key={user.id}
                         className="flex flex-col text-center bg-white rounded-lg shadow mt-4"
                       >
                         <div className="flex-1 flex flex-col p-8">
                           <h3 className=" text-gray-900 text-sm font-medium">
-                            {client.name}
+                            {user.name}
                           </h3>
                           <dl className="mt-1 flex-grow flex flex-col justify-between">
                             <dd className="text-gray-500 text-sm">
-                              {client.number}
+                              {user.email}
                             </dd>
                             <dt className="sr-only">Role</dt>
                             <dd className="mt-3">
-                              <span>
-                                Primary Contact - {client.contactName}
+                              <span className="px-2 py-1 text-green-800 text-xs font-medium bg-green-100 rounded-full">
+                                {user.isAdmin ? "admin" : "user"}
                               </span>
                             </dd>
                           </dl>
                         </div>
-                        <div className="space-x-4 align-middle flex flex-row justify-center -mt-8 mb-4">
-                          <UpdateClientModal client={client} />
-                          <ClientNotesModal
-                            notes={client.notes}
-                            id={client.id}
+                        <div className="space-x-4 flex flex-row justify-center -mt-8 mb-4">
+                          <UpdateUserModal
+                            user={user}
+                            refetch={() => handleRefresh}
                           />
+                          <ResetPassword user={user} />
+                          {/* <Popconfirm
+                            title="Are you sure you want to delete?"
+                            onConfirm={() => deleteClient(user.id)}
+                          >
+                            <button
+                              type="button"
+                              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            >
+                              Delete
+                            </button>
+                          </Popconfirm> */}
                         </div>
                       </div>
                     ))}
