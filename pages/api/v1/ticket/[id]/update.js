@@ -10,11 +10,12 @@ export default async function updateTicket(req,res) {
     await prisma.ticket.update({
       where: { id: Number(id) },
       data: {
-        detail,
+        updatedAt: new Date().toISOString(),
+        details: detail,
         note
       },
     });
-    res.status(201).json({ success: true, message: "Ticket saved" });
+    res.status(201).json({ success: true, message: "Issue was successfully updated!" });
   } catch (error) {
     console.log(error);
     return res.status(500);
