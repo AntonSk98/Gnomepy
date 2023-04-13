@@ -1,6 +1,3 @@
--- CreateEnum
-CREATE TYPE "Hook" AS ENUM ('ticket_created', 'ticket_status_changed');
-
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
@@ -19,31 +16,15 @@ CREATE TABLE "Ticket" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "name" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "detail" TEXT,
+    "details" TEXT,
     "email" TEXT NOT NULL,
     "note" TEXT,
     "isComplete" BOOLEAN NOT NULL,
     "priority" TEXT NOT NULL,
-    "clientId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
 
     CONSTRAINT "Ticket_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Client" (
-    "id" SERIAL NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "contactName" TEXT NOT NULL,
-    "number" TEXT,
-    "notes" TEXT,
-
-    CONSTRAINT "Client_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -92,29 +73,11 @@ CREATE TABLE "Todos" (
     CONSTRAINT "Todos_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "Webhooks" (
-    "id" SERIAL NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "name" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
-    "type" "Hook" NOT NULL,
-
-    CONSTRAINT "Webhooks_pkey" PRIMARY KEY ("id")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");
-
 -- AddForeignKey
 ALTER TABLE "Ticket" ADD CONSTRAINT "Ticket_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Ticket" ADD CONSTRAINT "Ticket_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserFile" ADD CONSTRAINT "UserFile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
