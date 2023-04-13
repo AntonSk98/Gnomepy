@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-async function main() {
+async function initialize() {
   const admin = await prisma.user.upsert({
     where: { email: "admin@admin.com" },
     update: {},
@@ -13,21 +13,10 @@ async function main() {
     },
   });
 
-  const internal = await prisma.client.upsert({
-    where: { email: `internal@admin.com` },
-    update: {},
-    create: {
-      email: `internal@admin.com`,
-      name: "internal",
-      contactName: "admin",
-      number: '123456789',
-    },
-  })
-
-  console.log({ admin, internal });
+  console.log("Created initial admin: ", {admin});
 }
 
-main()
+initialize()
   .catch((e) => {
     console.error(e);
     process.exit(1);
