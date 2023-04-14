@@ -277,7 +277,7 @@ export default function SideLayout({ children }) {
                       <div className={isCurrentPath(navigationPaths.openTickets) ? "bg-green-600 rounded-md" : ""}>
                         <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
                           <ExclamationCircleIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></ExclamationCircleIcon>
-                          Pending issues
+                          My pending issues
                         </div>
                       </div>
                     </Link>
