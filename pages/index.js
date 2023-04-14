@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect, useContext} from "react";
 import { CheckCircleIcon } from "@heroicons/react/solid";
 import { Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
@@ -7,22 +7,18 @@ import Link from "next/link";
 
 import ListTodo from "../components/ListTodo";
 import ListUserFiles from "../components/ListUserFiles";
+import {useRouter} from "next/router";
 
-export default function Home() {
+export default function Dashboard() {
   const { data: session } = useSession();
 
-  const [hour, setHour] = useState();
+  const router = useRouter();
+
   const [openTickets, setOpenTickets] = useState(0);
   const [completedTickets, setCompletedTickets] = useState(0);
   const [uploaded, setUploaded] = useState(false);
 
   let file = [];
-
-  async function time() {
-    const date = new Date();
-    const hour = date.getHours();
-    setHour(hour);
-  }
 
   async function getOpenTickets() {
     await fetch(`/api/v1/data/count/open-tickets`, {
@@ -87,8 +83,7 @@ export default function Home() {
   useEffect(() => {
     getOpenTickets();
     getCompletedTickets();
-    time();
-  }, []);
+  }, [router.query]);
 
   return (
     <div>
@@ -113,8 +108,7 @@ export default function Home() {
                         </span>
                       </span>
                       <h1 className="ml-3 text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate">
-                        Good {hour < 12 ? "Morning" : "Afternoon"},{" "}
-                        {session.user.name}!
+                        Hello {session.user.name}!
                       </h1>
                     </div>
                     <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">

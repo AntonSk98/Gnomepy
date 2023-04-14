@@ -10,6 +10,8 @@ import Head from 'next/head'
 
 
 import SideLayout from "../components/Layout/SideLayout";
+import 'react-toastify/dist/ReactToastify.css';
+import {ToastContainer} from "react-toastify";
 
 const queryClient = new QueryClient();
 
@@ -66,7 +68,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <QueryClientProvider client={queryClient}>
           <Auth>
             <SideLayout>
-              <Component {...pageProps} />
+                <Component {...pageProps} />
+                <ToastContainer />
             </SideLayout>
           </Auth>
         </QueryClientProvider>

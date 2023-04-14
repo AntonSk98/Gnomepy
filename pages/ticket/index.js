@@ -30,6 +30,7 @@ function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     />
   );
 }
+
 function Table({ columns, data }) {
   const filterTypes = React.useMemo(
     () => ({
