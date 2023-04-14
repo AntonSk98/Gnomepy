@@ -1,57 +1,66 @@
-import {useState, useEffect, useContext} from "react";
-import { CheckCircleIcon } from "@heroicons/react/solid";
-import { Upload, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {useState, useEffect} from "react";
+import {CheckCircleIcon} from "@heroicons/react/solid";
+import { Upload } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 import ListTodo from "../components/ListTodo";
 import ListUserFiles from "../components/ListUserFiles";
 import {useRouter} from "next/router";
+import {errorNotification, successNotification} from "../notifications/notifications";
+import {RotatingLines} from "react-loader-spinner";
+import {UploadIcon} from "@heroicons/react/outline";
 
 export default function Dashboard() {
   const { data: session } = useSession();
 
   const router = useRouter();
 
-  const [openTickets, setOpenTickets] = useState(0);
-  const [completedTickets, setCompletedTickets] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [pendingIssues, setPendingIssues] = useState(0);
+  const [resolvedIssues, setResolvedIssues] = useState(0);
   const [uploaded, setUploaded] = useState(false);
 
   let file = [];
 
-  async function getOpenTickets() {
-    await fetch(`/api/v1/data/count/open-tickets`, {
-      method: "get",
-      headers: {
-        ContentType: "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setOpenTickets(res.result);
+  async function getPendingIssues() {
+    try {
+      const response = await fetch(`/api/v1/data/count/open-tickets`, {
+        method: "get",
+        headers: {
+          ContentType: "application/json",
+        },
       });
+      const pendingIssues = await response.json();
+      setPendingIssues(pendingIssues.result);
+    } catch (error) {
+      errorNotification('Unexpected error occurred while getting pending issues');
+    }
   }
 
-  async function getCompletedTickets() {
-    await fetch(`/api/v1/data/count/completed-tickets`, {
-      method: "get",
-      headers: {
-        ContentType: "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setCompletedTickets(res.result);
+  async function getResolvedIssues() {
+    try {
+      const response = await fetch(`/api/v1/data/count/completed-tickets`, {
+        method: "get",
+        headers: {
+          ContentType: "application/json",
+        },
       });
+
+      const resolvedIssues = await response.json();
+      setResolvedIssues(resolvedIssues.result);
+    } catch (error) {
+      errorNotification('Unexpected error occurred while getting resolved issues');
+    }
+
   }
 
   const stats = [
-    { name: "Open Tickets", stat: openTickets, href: "/ticket" },
-    { name: "Completed Tickets", stat: completedTickets, href: "/history" },
+    { name: "Pending Issues", stat: pendingIssues, href: "/ticket" },
+    { name: "Completed Tickets", stat: resolvedIssues, href: "/history" },
   ];
 
-  const propsUpload = {
+  const uploadProperties = {
     name: "file",
     action: `/api/v1/users/file/upload`,
     data: () => {
@@ -60,20 +69,18 @@ export default function Dashboard() {
       data.append("filename", file.name);
     },
     onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
       if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-        setUploaded(true);      
+        successNotification(`${info.file.name} file uploaded successfully`)
+        setUploaded(true);
       } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+        errorNotification(`${info.file.name} file upload failed.`);
       }
     },
+    showUploadList: false,
     progress: {
       strokeColor: {
-        "0%": "#108ee9",
-        "100%": "#87d068",
+        "0%": "#1F2937",
+        "100%": "#065F46",
       },
       strokeWidth: 3,
       format: (percent) => `${parseFloat(percent.toFixed(2))}%`,
@@ -81,43 +88,35 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    getOpenTickets();
-    getCompletedTickets();
+    setIsLoading(true);
+    Promise.all([ getPendingIssues(),  getResolvedIssues()]).finally(() => setIsLoading(false));
   }, [router.query]);
 
   return (
     <div>
       <main className="p-1">
         {/* Page header */}
-        <div className="bg-white shadow">
-          <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
+        <div className="bg-white shadow border-emerald-800 rounded-xl">
+          <div className="px-4 sm:px-6 lg:max-w-6xl lg:px-8">
             <div className="py-6 md:flex md:items-center md:justify-between">
               <div className="flex-1 min-w-0">
                 {/* Profile */}
                 <div className="flex items-center">
-                  <span className="hidden sm:inline-flex items-center justify-center h-12 w-12 rounded-full bg-gray-500">
+                  <span className="hidden sm:inline-flex items-center justify-center h-12 w-12 rounded-full bg-green-600">
                     <span className="text-lg font-medium leading-none text-white uppercase">
                       {session.user.name[0]}
                     </span>
                   </span>
                   <div>
                     <div className="flex items-center">
-                      <span className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-gray-500 sm:hidden">
-                        <span className="text-lg font-medium leading-none text-white uppercase">
-                          {session.user.name[0]}
-                        </span>
-                      </span>
-                      <h1 className="ml-3 text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate">
+                      <h1 className="ml-3 text-2xl font-bold leading-7 text-emerald-800 sm:leading-9 sm:truncate cursor-default">
                         Hello {session.user.name}!
                       </h1>
                     </div>
                     <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">
                       <dt className="sr-only">Account status</dt>
-                      <dd className="mt-3 flex items-center text-sm text-gray-500 font-medium sm:mr-6 sm:mt-0 capitalize">
-                        <CheckCircleIcon
-                          className="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400"
-                          aria-hidden="true"
-                        />
+                      <dd className="mt-3 flex items-center text-sm text-gray-800 font-medium sm:mr-6 sm:mt-0 capitalize cursor-default">
+                        <CheckCircleIcon className="flex-shrink-0 mr-1 h-5 w-5 text-emerald-800" aria-hidden="true"/>
                         {session.user.isAdmin ? "Admin" : "user"}
                       </dd>
                     </dl>
@@ -132,19 +131,20 @@ export default function Dashboard() {
           <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
             {stats.map((item) => (
               <Link href={item.href}>
-                <a>
-                  <div
-                    key={item.name}
-                    className="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6"
-                  >
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      {item.name}
-                    </dt>
-                    <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                      {item.stat}
-                    </dd>
-                  </div>
-                </a>
+                <div key={item.name} className="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6 cursor-pointer hover:bg-slate-200 duration-300">
+                  <dt className="text-sm font-bold text-emerald-800 truncate">
+                    {item.name}
+                  </dt>
+                  <dd className="mt-2 text-3xl font-semibold text-gray-800">
+                    {isLoading ? <RotatingLines
+                        strokeColor="rgb(31 41 55)"
+                        strokeWidth="5"
+                        animationDuration="1"
+                        width="30"
+                        visible={true}
+                    />: <span>{item.stat}</span> }
+                  </dd>
+                </div>
               </Link>
             ))}
           </dl>
@@ -156,9 +156,7 @@ export default function Dashboard() {
               <div className="px-2 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-4">
                 <div className="px-2 py-5 sm:p-6">
                   <div>
-                    <h1 className="font-bold leading-7 text-gray-900">
-                      Todo List
-                    </h1>
+                    <h1 className="font-bold leading-7 text-emerald-800 cursor-default">Task scheduler...</h1>
                   </div>
                   <ListTodo />
                 </div>
@@ -169,19 +167,14 @@ export default function Dashboard() {
           <div className="flex w-full sm:w-2/5">
             <div className="bg-white shadow w-full h-full sm:rounded-lg">
               <div className="px-2 py-5 sm:p-6 flex flex-row">
-                <h2
-                  className="font-bold leading-7 text-gray-900"
-                  id="recent-hires-title"
-                >
-                  Personal Files
+                <h2 className="font-bold leading-7 text-emerald-800 cursor-default" id="recent-hires-title">
+                  Private files
                 </h2>
                 <Upload
-                  {...propsUpload}
-                  className="px-4 flex align-middle items-center -mt-3"
+                  {...uploadProperties}
+                  className="px-3 flex align-middle items-center -mt-3"
                 >
-                  <button>
-                    <UploadOutlined />
-                  </button>
+                  <button><UploadIcon className="h-5 w-5 mt-2 text-emerald-800 hover:text-gray-800 duration-300" aria-hidden="true"/></button>
                 </Upload>
               </div>
               <ListUserFiles uploaded={uploaded} setUploaded={() => setUploaded()} />

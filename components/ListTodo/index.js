@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import { Pagination } from "antd";
-import { TrashIcon, ArrowRightIcon } from "@heroicons/react/solid";
+import {ArrowRightIcon, CheckCircleIcon} from "@heroicons/react/solid";
 import { useQuery } from "react-query";
+import {errorNotification, successNotification} from "../../notifications/notifications";
 
-async function getTodos() {
+async function getTasks() {
   const res = await fetch("/api/v1/todo/get");
   return res.json();
 }
 
 export default function ListTodo() {
-  const { status, error, data, refetch } = useQuery("repoData", getTodos);
+  const { status, error, data, refetch } = useQuery("repoData", getTasks);
 
   const [minValue, setMinValue] = useState(0);
   const [maxValue, setMaxValue] = useState(7);
-  const [text, setText] = useState("");
+  const [inputTaskValue, setInputTaskValue] = useState("");
 
   function handleChange(value) {
     if (value <= 1) {
@@ -25,22 +26,26 @@ export default function ListTodo() {
     }
   }
 
-  async function onSubmit() {
+  async function createNewTask() {
     await fetch("/api/v1/todo/create", {
       method: "POST",
       body: JSON.stringify({
-        todo: text,
+        todo: inputTaskValue,
       }),
     }).then(() => {
+      successNotification('Successfully created a new task!');
       refetch();
-      setText("");
-    });
+      setInputTaskValue("");
+    }).catch(() => errorNotification('Unexpected error occurred while creating the list of tasks...'));
   }
 
-  async function deleteTodo(id) {
+  async function deleteTask(id) {
     await fetch(`api/v1/todo/delete/${id}`, {
       method: "POST",
-    }).then(() => refetch());
+    }).then(() => {
+      successNotification('Done!');
+      refetch();
+    }).catch(() => errorNotification('Unexpected error while removing a task...'));
   }
 
   async function markDone(id) {
@@ -51,7 +56,7 @@ export default function ListTodo() {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      onSubmit();
+      createNewTask();
     }
   };
 
@@ -63,17 +68,17 @@ export default function ListTodo() {
             type="text"
             name="text"
             id="text"
-            className="w-full text-gray-900 border-none focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm "
-            placeholder="Enter todo here..."
+            className="w-full text-gray-900 border-none focus:outline-none focus:ring-emerald-800 focus:border-emerald-800 focus:rounded-xl sm:text-sm "
+            placeholder="Enter a new task here..."
             onChange={(e) => {
-              setText(e.target.value);
+              setInputTaskValue(e.target.value);
             }}
             onKeyDown={handleKeyDown}
-            value={text}
+            value={inputTaskValue}
           />
         </div>
-        <button type="button" onClick={() => onSubmit()} className="ml-4">
-          <ArrowRightIcon className="h-6 w-6" />
+        <button type="button" onClick={() => createNewTask()} className="ml-4">
+          <ArrowRightIcon className="h-6 w-6 text-emerald-800 hover:text-gray-800 duration-300" />
         </button>
       </div>
 
@@ -90,11 +95,11 @@ export default function ListTodo() {
                           {todo.text}
                         </span>
                         <button
-                          onClick={() => deleteTodo(todo.id)}
+                          onClick={() => deleteTask(todo.id)}
                           type="button"
-                          className="float-right border border-transparent rounded-full shadow-sm text-red-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                          className="float-right border border-transparent rounded-full shadow-sm text-emerald-800 hover:text-gray-800 duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
-                          <TrashIcon className="h-5 w-5" aria-hidden="true" />
+                          <CheckCircleIcon className="h-7 w-7" aria-hidden="true" />
                         </button>
                       </li>
                     </ul>

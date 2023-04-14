@@ -85,7 +85,7 @@ export default function CreateTicketModal() {
 
       if (response.ok) {
         await router.replace(router.pathname + '?instant=' + Date.now(), router.pathname);
-        successNotification('New issue was created successfully!');
+        successNotification('New issue was successfully created!');
       } else {
         errorNotification('Something went wrong while creating a new issue...')
       }
