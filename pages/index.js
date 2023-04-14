@@ -57,7 +57,7 @@ export default function Dashboard() {
 
   const stats = [
     { name: "Pending Issues", stat: pendingIssues, href: "/ticket" },
-    { name: "Completed Tickets", stat: resolvedIssues, href: "/history" },
+    { name: "Resolved Issues", stat: resolvedIssues, href: "/history" },
   ];
 
   const uploadProperties = {
