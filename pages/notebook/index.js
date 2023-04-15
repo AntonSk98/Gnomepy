@@ -34,7 +34,7 @@ export default function GetNoteBook() {
           <Link href="/notebook/new">
             <button
                 type="button"
-                className="xs:bg-red-200 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-800 hover:bg-emerald-600 duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                className="xs:bg-red-200 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-emerald-800 hover:bg-emerald-600 duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               Add notebook
             </button>
