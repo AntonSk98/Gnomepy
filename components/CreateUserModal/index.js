@@ -2,6 +2,7 @@ import React, { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
+import {errorNotification, successNotification} from "../../notifications/notifications";
 
 export default function CreateUser() {
   const [open, setOpen] = useState(false);
@@ -14,7 +15,7 @@ export default function CreateUser() {
   const router = useRouter();
 
   async function createUser() {
-    await fetch("/api/v1/admin/user/create", {
+    const response = await fetch("/api/v1/admin/user/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,9 +27,16 @@ export default function CreateUser() {
         admin,
       }),
     });
+    if (response.ok) {
+      successNotification('Successfully created a new user!');
+      await router.replace(router.pathname + '?instant=' + Date.now(), router.pathname);
+    } else {
+      errorNotification('Unexpected error occurred!');
+    }
+    setOpen(false);
   }
 
-  const notificationMethods = [
+  const roles = [
     { id: "user", title: "user" },
     { id: "admin", title: "admin" },
   ];
@@ -38,7 +46,7 @@ export default function CreateUser() {
       <button
         onClick={() => setOpen(true)}
         type="button"
-        className="inline-flex items-center p-1 border border-transparent rounded-md shadow-sm text-white bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        className="inline-flex items-center p-2 border border-transparent rounded-xl shadow-sm text-white bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800 hover:bg-green-600 duration-500"
       >
         New User
       </button>
@@ -92,38 +100,39 @@ export default function CreateUser() {
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                     <Dialog.Title
                       as="h3"
-                      className="text-lg leading-6 font-medium text-gray-900"
+                      className="text-lg leading-6 font-bold text-emerald-800"
                     >
-                      Create a new user
+                      Fill out the form...
                     </Dialog.Title>
-                    <div className="mt-2 space-y-4">
+                    <div className="mt-5 space-y-4">
                       <input
                         type="text"
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-1/2 sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Enter first name here..."
+                        className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block sm:text-sm border-gray-300 rounded-xl shadow-md w-full"
+                        placeholder="Name..."
                         name="name"
                         onChange={(e) => setName(e.target.value)}
                       />
 
                       <input
-                        type="text"
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Enter email here...."
+                        type="email"
+                        required
+                        className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block sm:text-sm border-gray-300 rounded-xl shadow-md w-full"
+                        placeholder="Email..."
                         onChange={(e) => setEmail(e.target.value)}
                       />
 
                       <input
                         type="password"
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Enter password here..."
+                        className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block sm:text-sm border-gray-300 rounded-xl shadow-md w-full"
+                        placeholder="Password..."
                         onChange={(e) => setPassword(e.target.value)}
                       />
 
-                      <label className="text-base font-medium text-gray-900 mt-2">
-                        User Type
-                      </label>
-                      <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-                        {notificationMethods.map((notificationMethod) => (
+                      <div className="text-base font-bold text-emerald-800">
+                        Role:
+                      </div>
+                      <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10 my-0">
+                        {roles.map((notificationMethod) => (
                           <div
                             key={notificationMethod.id}
                             className="flex items-center"
@@ -133,7 +142,7 @@ export default function CreateUser() {
                               name="notification-method"
                               type="radio"
                               defaultChecked={notificationMethod.id === "user"}
-                              className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                              className="focus:ring-emerald-800 h-5 w-5 text-emerald-800 border-gray-300"
                               value={notificationMethod.id}
                               onChange={(e) =>
                                 e.target.value === "admin"
@@ -156,10 +165,9 @@ export default function CreateUser() {
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <button
                     type="button"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-800 text-base font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={() => {
                       createUser();
-                      router.reload(router.pathname);
                     }}
                   >
                     Save

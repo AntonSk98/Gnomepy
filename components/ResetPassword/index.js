@@ -1,22 +1,15 @@
 import React, { useState, Fragment } from "react";
-import { message } from "antd";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
+import {errorNotification, successNotification} from "../../notifications/notifications";
 
 export default function ResetPassword({ user }) {
+
   const [open, setOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [check, setCheck] = useState("");
 
-  const success = () => {
-    message.success("Password updated");
-  };
-
-  const fail = (f) => {
-    message.error(`${f}`);
-  };
-
-  const postData = async () => {
+  const updatePassword = async () => {
     const id = user.id;
     if (check === password) {
       await fetch(`/api/v1/admin/user/resetpassword`, {
@@ -32,19 +25,19 @@ export default function ResetPassword({ user }) {
         .then((res) => res.json())
         .then((res) => {
           if (res.failed === false) {
-            success();
+            successNotification('Successfully updated the password');
           } else {
-            fail(res.message);
+            errorNotification('Something went wrong while resetting the password...');
           }
         });
     } else {
-      fail("Passwords are not the same");
+      errorNotification("Passwords do not match!");
     }
   };
 
-  const onCreate = async () => {
+  const onPasswordReset = async () => {
+    await updatePassword();
     setOpen(false);
-    await postData();
   };
 
   return (
@@ -52,7 +45,7 @@ export default function ResetPassword({ user }) {
       <button
         onClick={() => setOpen(true)}
         type="button"
-        className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        className="inline-flex items-center px-2.5 py-1.5 border border-emerald-800 shadow-sm text-xs font-medium rounded-xl text-emerald-800 bg-white hover:bg-emerald-800 hover:text-white duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800"
       >
         Reset Password
       </button>
@@ -105,24 +98,24 @@ export default function ResetPassword({ user }) {
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                     <Dialog.Title
-                      as="h3"
-                      className="text-lg leading-6 font-medium text-gray-900"
+                        as="h3"
+                        className="text-lg leading-6 font-bold text-emerald-800"
                     >
-                      Reset Password
+                      Reset password...
                     </Dialog.Title>
-                    <div className="mt-2 space-y-4">
+                    <div className="mt-5 space-y-4">
                       <input
                         type="password"
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block sm:text-sm border-gray-300 rounded-xl shadow-md w-full"
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter users new password"
+                        placeholder="New password"
                       />
 
                       <input
                         type="password"
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block sm:text-sm border-gray-300 rounded-xl shadow-md w-full"
                         onChange={(e) => setCheck(e.target.value)}
-                        placeholder="Confirm users password"
+                        placeholder="Confirm password"
                       />
                     </div>
                   </div>
@@ -130,14 +123,14 @@ export default function ResetPassword({ user }) {
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <button
                     type="button"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
-                    onClick={() => onCreate()}
+                    className="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-emerald-800 text-base font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800 sm:ml-3 sm:w-auto sm:text-sm duration-500"
+                    onClick={() => onPasswordReset()}
                   >
                     Update
                   </button>
                   <button
                     type="button"
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                    className="mt-3 w-full inline-flex justify-center rounded-xl border border-emerald-800 shadow-sm px-4 py-2 text-base font-medium text-emerald-800 hover:bg-gray-600 hover:text-white duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
                     onClick={() => setOpen(false)}
                   >
                     Cancel

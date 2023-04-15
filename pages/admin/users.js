@@ -1,25 +1,19 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useQuery } from "react-query";
-import { Popconfirm } from "antd";
-import {
-  useTable,
-  useFilters,
-  useGlobalFilter,
-  usePagination,
-} from "react-table";
+import { useTable, useFilters, useGlobalFilter, usePagination } from "react-table";
 import ResetPassword from "../../components/ResetPassword";
 import CreateUser from "../../components/CreateUserModal";
 import UpdateUserModal from "../../components/UpdateUserModal";
-
-const fetchUsers = async () => {
-  const res = await fetch("/api/v1/users/all");
-  return res.json();
-};
+import {ArrowCircleLeftIcon, ArrowCircleRightIcon} from "@heroicons/react/solid";
+import {errorNotification, successNotification} from "../../notifications/notifications";
+import {useSession} from "next-auth/react";
+import {RotatingLines} from "react-loader-spinner";
+import {useRouter} from "next/router";
 
 function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
   return (
     <input
-      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+      className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block w-full sm:text-sm border-gray-300 ring-gray-300 rounded-md"
       type="text"
       value={filterValue || ""}
       onChange={(e) => {
@@ -29,13 +23,10 @@ function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     />
   );
 }
+
 function Table({ columns, data }) {
   const filterTypes = React.useMemo(
     () => ({
-      // Add a new fuzzyTextFilterFn filter type.
-      // fuzzyText: fuzzyTextFilterFn,
-      // Or, override the default text filter to use
-      // "startWith"
       text: (rows, id, filterValue) =>
         rows.filter((row) => {
           const rowValue = row.values[id];
@@ -51,7 +42,6 @@ function Table({ columns, data }) {
 
   const defaultColumn = React.useMemo(
     () => ({
-      // Let's set up our default Filter UI
       Filter: DefaultColumnFilter,
     }),
     []
@@ -65,23 +55,21 @@ function Table({ columns, data }) {
     prepareRow,
     canPreviousPage,
     canNextPage,
-    pageCount,
-    gotoPage,
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageSize },
   } = useTable(
     {
       columns,
       data,
-      defaultColumn, // Be sure to pass the defaultColumn option
+      defaultColumn,
       filterTypes,
       initialState: {
         pageIndex: 0,
       },
     },
-    useFilters, // useFilters!
+    useFilters,
     useGlobalFilter,
     usePagination
   );
@@ -104,11 +92,11 @@ function Table({ columns, data }) {
                     column.hideHeader === false ? null : (
                       <th
                         {...column.getHeaderProps()}
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-sm font-bold text-emerald-800 uppercase tracking-wider cursor-default"
                       >
                         {column.render("Header")}
                         {/* Render the columns filter UI */}
-                        <div>
+                        <div className="mt-2">
                           {column.canFilter ? column.render("Filter") : null}
                         </div>
                       </th>
@@ -146,12 +134,12 @@ function Table({ columns, data }) {
                   htmlFor="location"
                   className="block text-sm font-medium text-gray-700 mt-4"
                 >
-                  Show
+                  Display
                 </p>
                 <select
                   id="location"
                   name="location"
-                  className="block w-full pl-3 pr-10 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  className="block w-full pl-3 pr-10 text-base border-gray-300 focus:outline-none focus:ring-emerald-800 focus:border-emerald-800 sm:text-sm rounded-md cursor-pointer"
                   value={pageSize}
                   onChange={(e) => {
                     setPageSize(Number(e.target.value));
@@ -165,23 +153,15 @@ function Table({ columns, data }) {
                 </select>
               </div>
             </div>
-            <div className="flex-1 flex justify-between sm:justify-end">
-              <button
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                type="button"
-                onClick={() => previousPage()}
-                disabled={!canPreviousPage}
-              >
-                Previous
-              </button>
-              <button
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                type="button"
-                onClick={() => nextPage()}
-                disabled={!canNextPage}
-              >
-                Next
-              </button>
+            <div className="flex-1 flex justify-between sm:justify-end items-center">
+              <ArrowCircleLeftIcon
+                  className="flex-shrink-0 mr-1 h-8 w-8 text-emerald-800 cursor-pointer hover:text-gray-800 duration-300"
+                  onClick={() => canPreviousPage ? previousPage() : null}
+              ></ArrowCircleLeftIcon>
+              <ArrowCircleRightIcon
+                  className="flex-shrink-0 mr-1 h-8 w-8 ml-2 text-emerald-800 cursor-pointer hover:text-gray-800 duration-300"
+                  onClick={() => canNextPage ? nextPage() : null}
+              ></ArrowCircleRightIcon>
             </div>
           </nav>
         </div>
@@ -191,25 +171,38 @@ function Table({ columns, data }) {
 }
 
 export default function Users() {
-  const { data, status, refetch } = useQuery("fetchAuthUsers", fetchUsers);
+  const fetchUsers = async () => {
+    const res = await fetch("/api/v1/users/all");
+    return res.json();
+  };
 
-  async function deleteClient(client) {
-    const id = client.id;
+  const removeUser = async (userId) => {
     try {
-      await fetch(`/api/v1/auth/delete/${id}`, {
+      const response = await fetch(`/api/v1/users/${userId}/delete`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-      })
-        .then((response) => response.json())
-        .then(() => {
-          refetch;
-        });
+      });
+      if (response.ok) {
+        await response.json();
+        successNotification('Successfully removed the user and all related data!');
+        await refetch();
+      } else {
+        errorNotification('Unexpected error occurred while removing the user...')
+      }
     } catch (error) {
-      console.log(error);
+      errorNotification('Unexpected error occurred...')
     }
   }
+
+  const router = useRouter();
+  const { data, status, refetch } = useQuery("fetchAuthUsers", fetchUsers);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    refetch();
+  }, [router.query]);
 
   const columns = React.useMemo(() => [
     {
@@ -231,17 +224,12 @@ export default function Users() {
           <div className="space-x-4 flex flex-row">
             <UpdateUserModal user={row.original} />
             <ResetPassword user={row.original} />
-            {/* <Popconfirm
-              title="Are you sure you want to delete?"
-              onConfirm={() => deleteClient(row.cells[0].value)}
-            >
-              <button
-                type="button"
-                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                Delete
-              </button>
-            </Popconfirm> */}
+            {session.user.id !== row.original.id &&
+                <div
+                    className="border-2 border-red-800 text-red-800 font-semibold rounded-xl px-2 py-1 cursor-pointer hover:bg-red-800 duration-500 focus:bg-red-800 hover:text-white"
+                    onClick={() => removeUser(row.original.id)}>
+                  Purge
+                </div>}
           </div>
         );
       },
@@ -256,8 +244,8 @@ export default function Users() {
       >
         <div className="py-6">
           <div className="flex flex-row max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Internal Users
+            <h1 className="text-2xl font-bold text-emerald-800 cursor-default">
+              User management
             </h1>
             <div className="ml-4">
               <CreateUser />
@@ -266,9 +254,13 @@ export default function Users() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <div className="py-4">
               {status === "loading" && (
-                <div className="min-h-screen flex flex-col justify-center items-center py-12 sm:px-6 lg:px-8">
-                  <h2> Loading data ... </h2>
-                </div>
+                  <RotatingLines
+                      strokeColor="rgb(6 95 70)"
+                      strokeWidth="5"
+                      animationDuration="1"
+                      width="40"
+                      visible={true}
+                  />
               )}
 
               {status === "error" && (
@@ -287,19 +279,11 @@ export default function Users() {
                   </div>
                   <div className="sm:hidden">
                     {data.users.map((user) => (
-                      <div
-                        key={user.id}
-                        className="flex flex-col text-center bg-white rounded-lg shadow mt-4"
-                      >
+                      <div key={user.id} className="flex flex-col text-center bg-white rounded-lg shadow mt-4">
                         <div className="flex-1 flex flex-col p-8">
-                          <h3 className=" text-gray-900 text-sm font-medium">
-                            {user.name}
-                          </h3>
+                          <h3 className=" text-gray-900 text-sm font-medium">{user.name}</h3>
                           <dl className="mt-1 flex-grow flex flex-col justify-between">
-                            <dd className="text-gray-500 text-sm">
-                              {user.email}
-                            </dd>
-                            <dt className="sr-only">Role</dt>
+                            <dd className="text-gray-500 text-sm">{user.email}</dd>
                             <dd className="mt-3">
                               <span className="px-2 py-1 text-green-800 text-xs font-medium bg-green-100 rounded-full">
                                 {user.isAdmin ? "admin" : "user"}
@@ -307,23 +291,9 @@ export default function Users() {
                             </dd>
                           </dl>
                         </div>
-                        <div className="space-x-4 flex flex-row justify-center -mt-8 mb-4">
-                          <UpdateUserModal
-                            user={user}
-                            refetch={() => handleRefresh}
-                          />
+                        <div className="space-x-4 flex flex-row justify-center mb-4">
+                          <UpdateUserModal user={user} refetch={() => handleRefresh}/>
                           <ResetPassword user={user} />
-                          {/* <Popconfirm
-                            title="Are you sure you want to delete?"
-                            onConfirm={() => deleteClient(user.id)}
-                          >
-                            <button
-                              type="button"
-                              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                            >
-                              Delete
-                            </button>
-                          </Popconfirm> */}
                         </div>
                       </div>
                     ))}

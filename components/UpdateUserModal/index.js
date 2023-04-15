@@ -2,6 +2,7 @@ import React, { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
+import {errorNotification, successNotification} from "../../notifications/notifications";
 
 export default function UpdateUserModal({ user }) {
   const [open, setOpen] = useState(false);
@@ -18,7 +19,7 @@ export default function UpdateUserModal({ user }) {
   ];
 
   async function updateUser() {
-    await fetch("/api/v1/admin/user/update", {
+    const response = await fetch("/api/v1/admin/user/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,6 +31,14 @@ export default function UpdateUserModal({ user }) {
         id: user.id,
       }),
     });
+
+    if (response.ok) {
+      successNotification('Successfully updated the user!');
+      await router.replace(router.pathname + '?instant=' + Date.now(), router.pathname);
+    } else {
+      errorNotification('Unexpected error occurred!');
+    }
+    setOpen(false);
   }
 
   return (
@@ -37,7 +46,7 @@ export default function UpdateUserModal({ user }) {
       <button
         onClick={() => setOpen(true)}
         type="button"
-        className="inline-flex items-center py-1 px-4 border border-transparent rounded-md shadow-sm text-white bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        className="inline-flex items-center py-1 px-4 border border-transparent rounded-xl shadow-sm text-white bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800 hover:bg-green-600 duration-500"
       >
         Edit
       </button>
@@ -90,16 +99,16 @@ export default function UpdateUserModal({ user }) {
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                     <Dialog.Title
-                      as="h3"
-                      className="text-lg leading-6 font-medium text-gray-900"
+                        as="h3"
+                        className="text-lg leading-6 font-bold text-emerald-800"
                     >
-                      Edit User
+                      Update relevant data...
                     </Dialog.Title>
-                    <div className="mt-2 space-y-4">
+                    <div className="mt-5 space-y-4">
                       <input
                         type="text"
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-3/4 sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Enter client name here..."
+                        className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block sm:text-sm border-gray-300 rounded-xl shadow-md w-full"
+                        placeholder="Name..."
                         name="name"
                         onChange={(e) => setName(e.target.value)}
                         value={name}
@@ -107,25 +116,25 @@ export default function UpdateUserModal({ user }) {
 
                       <input
                         type="email"
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Enter email here...."
+                        className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block sm:text-sm border-gray-300 rounded-xl shadow-md w-full"
+                        placeholder="Email...."
                         onChange={(e) => setEmail(e.target.value)}
                         value={email}
                       />
 
                       <div className="">
-                        <label className="text-base font-medium text-gray-900">
-                          User Type
-                        </label>
-                        <div className="space-y-2 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+                        <div className="text-base font-bold text-emerald-800">
+                          Role:
+                        </div>
+                        <div className="mt-2 space-y-2 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
                           <span className="relative z-0 inline-flex shadow-sm rounded-md space-x-4">
                             <button
                               onClick={() => setAdmin(false)}
                               type="button"
                               className={
                                 admin === false
-                                  ? "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-green-500 text-sm font-medium text-white hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1"
-                                  : "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1"
+                                  ? "relative inline-flex ring-emerald-800 rounded-xl duration-500 items-center px-4 py-2 border border-emerald-800 bg-emerald-800 text-sm font-medium text-white hover:bg-green-600 focus:z-10 focus:outline-none focus:ring-1"
+                                  : "relative inline-flex items-center ring-emerald-800 rounded-xl duration-500 px-4 py-2 border border-emerald-800 text-sm font-medium text-emerald-800 hover:bg-green-600 focus:z-10 focus:outline-none focus:ring-1"
                               }
                             >
                               User
@@ -135,8 +144,8 @@ export default function UpdateUserModal({ user }) {
                               type="button"
                               className={
                                 admin === true
-                                  ? "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-green-500 text-sm font-medium text-white hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1"
-                                  : "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1"
+                                  ? "relative inline-flex rounded-xl ring-emerald-800 duration-500 items-center px-4 py-2 border border-emerald-800 bg-emerald-800 text-sm font-medium text-white hover:bg-green-600 focus:z-10 focus:outline-none focus:ring-1"
+                                  : "relative inline-flex rounded-xl ring-emerald-800 duration-500 items-center px-4 py-2 border border-emerald-800 text-sm font-medium text-emerald-800 hover:bg-green-600 focus:z-10 focus:outline-none focus:ring-1"
                               }                            >
                               Admin
                             </button>
@@ -149,10 +158,9 @@ export default function UpdateUserModal({ user }) {
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <button
                     type="button"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-800 text-base font-semibold text-white hover:bg-green-600 duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={async () => {
                       await updateUser();
-                      router.reload(router.pathname);
                     }}
                   >
                     Update

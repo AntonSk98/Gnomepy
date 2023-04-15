@@ -34,7 +34,7 @@ model Ticket {
   note       String?
   isComplete Boolean
   priority   String
-  assignedTo User?        @relation(fields: [userId], references: [id])
+  assignedTo User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     Int
   TicketFile TicketFile[]
 }
@@ -45,7 +45,7 @@ model UserFile {
   filename  String
   path      String
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model TicketFile {
@@ -63,7 +63,7 @@ model Notes {
   updatedAt DateTime @default(now())
   title     String
   note      String
-  createdBy User     @relation(fields: [userId], references: [id])
+  createdBy User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 }
 
@@ -73,6 +73,6 @@ model Todos {
   updatedAt DateTime @default(now())
   text      String
   done      Boolean  @default(false)
-  createdBy User     @relation(fields: [userId], references: [id])
+  createdBy User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 }
