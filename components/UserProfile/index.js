@@ -60,7 +60,7 @@ export default function UserProfile() {
                 >
                   Name
                 </label>
-                <div className="mt-1 rounded-md shadow-sm flex">
+                <div className="mt-1 rounded-xl shadow-sm flex">
                   <input
                     type="text"
                     name="name"
@@ -79,7 +79,7 @@ export default function UserProfile() {
                 >
                   Office
                 </label>
-                <div className="mt-1 rounded-md shadow-sm flex">
+                <div className="mt-1 rounded-xl shadow-sm flex">
                   <input
                     type="text"
                     name="office"
@@ -97,7 +97,7 @@ export default function UserProfile() {
                 >
                   Email
                 </label>
-                <div className="mt-1 rounded-md shadow-sm flex">
+                <div className="mt-1 rounded-xl shadow-sm flex">
                   <input
                     type="email"
                     name="email"
@@ -119,7 +119,7 @@ export default function UserProfile() {
               await postData()
             } }
             type="submit"
-            className="ml-5 bg-light-blue-700 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-black hover:bg-light-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-light-blue-500"
+            className="ml-5 bg-light-blue-700 border border-transparent rounded-xl shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-black hover:bg-light-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-light-blue-500"
           >
             Save
           </button>

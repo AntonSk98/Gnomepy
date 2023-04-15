@@ -17,7 +17,7 @@ async function getUserTickets() {
 function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
   return (
     <input
-      className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block w-full sm:text-sm border-gray-300 ring-gray-300 rounded-md"
+      className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block w-full sm:text-sm border-gray-300 ring-gray-300 rounded-xl"
       type="text"
       value={filterValue || ""}
       onChange={(e) => {
@@ -147,7 +147,7 @@ function Table({ columns, data }) {
                 <select
                   id="location"
                   name="location"
-                  className="block w-full pl-3 pr-10 text-base border-gray-300 focus:outline-none focus:ring-emerald-800 focus:border-emerald-800 sm:text-sm rounded-md cursor-pointer"
+                  className="block w-full pl-3 pr-10 text-base border-gray-300 focus:outline-none focus:ring-emerald-800 focus:border-emerald-800 sm:text-sm rounded-xl cursor-pointer"
                   value={pageSize}
                   onChange={(e) => {
                     setPageSize(Number(e.target.value));

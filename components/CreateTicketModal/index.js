@@ -136,7 +136,7 @@ export default function CreateTicketModal() {
         <button
           onClick={() => openNewIssueForm()}
           type="button"
-          className="group flex items-center px-2 py-2 text-sm font-medium w-full rounded-md hover:bg-gray-800 hover:text-white outline-none duration-300"
+          className="group flex items-center px-2 py-2 text-sm font-medium w-full rounded-xl hover:bg-gray-800 hover:text-white outline-none duration-300"
         >
 
           <svg
@@ -193,7 +193,7 @@ export default function CreateTicketModal() {
                         name="email"
                         disabled={!!session?.user?.email || isLoading}
                         placeholder= {session?.user?.email ? "Author: " + session?.user?.email : "Enter your email here..."}
-                        className="shadow-sm block w-full sm:text-sm border-green-600 rounded-md border-2 duration-300 focus:ring-emerald-800 focus:border-emerald-800 focus:ring-2"
+                        className="shadow-sm block w-full sm:text-sm border-green-600 rounded-xl border-2 duration-300 focus:ring-emerald-800 focus:border-emerald-800 focus:ring-2"
                       />
 
                       <input
@@ -203,14 +203,14 @@ export default function CreateTicketModal() {
                         placeholder="Enter title for the ticket here, keep it short...."
                         maxLength={64}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block w-full sm:text-sm border-green-600 focus:border-2 rounded-md focus:ring-2"
+                        className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block w-full sm:text-sm border-green-600 focus:border-2 rounded-xl focus:ring-2"
                       />
 
                       <Listbox value={responsible} onChange={setResponsible} disabled={isLoading}>
                         {({ open }) => (
                           <>
                             <div className="mt-1 relative">
-                              <Listbox.Button className="bg-white relative w-full border border-green-600 border-2 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none duration-300 hover:ring-emerald-800 hover:border-emerald-800 sm:text-sm hover:ring-2">
+                              <Listbox.Button className="bg-white relative w-full border border-green-600 border-2 rounded-xl shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none duration-300 hover:ring-emerald-800 hover:border-emerald-800 sm:text-sm hover:ring-2">
                                 <span className="block truncate">
                                   {responsible ? responsible.name : "Please select a responsible"}
                                 </span>
@@ -226,7 +226,7 @@ export default function CreateTicketModal() {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                               >
-                                <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                                <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-xl py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                                   {users.map((user) => (
                                     <Listbox.Option
                                       key={user.id}
@@ -300,7 +300,7 @@ export default function CreateTicketModal() {
                           createTicket().then(() => setOpen(false));
                         }}
                         type="button"
-                        className="w-1/2 mx-auto inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-800 text-base font-medium text-white hover:bg-green-600 duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 sm:col-start-2 sm:text-sm disabled:opacity-75 disabled:bg-gray-800 disabled:cursor-not-allowed"
+                        className="w-1/2 mx-auto inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-emerald-800 text-base font-medium text-white hover:bg-green-600 duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 sm:col-start-2 sm:text-sm disabled:opacity-75 disabled:bg-gray-800 disabled:cursor-not-allowed"
                       >
                         {isLoading ? <RotatingLines
                             strokeColor="rgb(240 253 250)"
@@ -316,7 +316,7 @@ export default function CreateTicketModal() {
                           setOpen(false);
                         }}
                         type="button"
-                        className="mt-3 w-1/2  mx-auto inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-800 hover:text-white duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm disabled:cursor-not-allowed">
+                        className="mt-3 w-1/2  mx-auto inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-800 hover:text-white duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm disabled:cursor-not-allowed">
                         Cancel
                       </button>
                     </div>

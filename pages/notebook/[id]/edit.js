@@ -59,7 +59,7 @@ export default function ViewNoteBook() {
                   type="text"
                   name="title"
                   id="title"
-                  className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                  className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-xl"
                   placeholder="Enter title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -73,7 +73,7 @@ export default function ViewNoteBook() {
                 router.reload(router.pathname);
               }}
               type="button"
-              className="mt-4 float-right inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              className="mt-4 float-right inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               Save Note
             </button>

@@ -127,7 +127,7 @@ export default function TicketDetail(props) {
                         onChange={(e) => setTitle(e.target.value)}
                         className={
                           edit
-                            ? "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                            ? "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-xl"
                             : "hidden"
                         }
                       />
@@ -141,7 +141,7 @@ export default function TicketDetail(props) {
                       <Upload {...propsUpload}>
                         <button
                           type="button"
-                          className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                          className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
                         >
                           <svg
                             className="-ml-1 mr-2 h-5 w-5 text-gray-400"
@@ -170,7 +170,7 @@ export default function TicketDetail(props) {
                       <button
                         onClick={() => setEdit(true)}
                         type="button"
-                        className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                        className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
                       >
                         <svg
                           className="-ml-1 mr-2 h-5 w-5 text-gray-400"
@@ -195,7 +195,7 @@ export default function TicketDetail(props) {
                           await update();
                         }}
                         type="button"
-                        className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                        className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
                       >
                         <svg
                           className="-ml-1 mr-2 h-5 w-5 text-gray-400"
@@ -217,7 +217,7 @@ export default function TicketDetail(props) {
                             history.push("/ticket");
                           }}
                           type="button"
-                          className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                          className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -240,7 +240,7 @@ export default function TicketDetail(props) {
                             history.reload(history.pathname);
                           }}
                           type="button"
-                          className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                          className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

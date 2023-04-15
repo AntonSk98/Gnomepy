@@ -160,7 +160,7 @@ export default function SideLayout({ children }) {
                               item.current
                                 ? "bg-green-500 text-white"
                                 : "text-white hover:bg-green-400 hover:text-white",
-                              "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                              "group flex items-center px-2 py-2 text-sm font-medium rounded-xl"
                             )}
                           >
                             <item.icon
@@ -196,7 +196,7 @@ export default function SideLayout({ children }) {
                                 item.current
                                   ? "bg-green-500 text-white"
                                   : "text-white hover:bg-green-400 hover:text-white",
-                                "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                                "group flex items-center px-2 py-2 text-sm font-medium rounded-xl"
                               )}
                             >
                               <span className="truncate">{item.name}</span>
@@ -265,8 +265,8 @@ export default function SideLayout({ children }) {
                     <CreateTicketModal />
 
                     <Link href={navigationPaths.dashboard}>
-                      <div className={isCurrentPath(navigationPaths.dashboard) ? "bg-green-600 rounded-md" : ""}>
-                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                      <div className={isCurrentPath(navigationPaths.dashboard) ? "bg-green-600 rounded-xl" : ""}>
+                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
                           <IdentificationIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></IdentificationIcon>
                           Dashboard
                         </div>
@@ -274,8 +274,8 @@ export default function SideLayout({ children }) {
                     </Link>
 
                     <Link href={navigationPaths.openTickets}>
-                      <div className={isCurrentPath(navigationPaths.openTickets) ? "bg-green-600 rounded-md" : ""}>
-                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                      <div className={isCurrentPath(navigationPaths.openTickets) ? "bg-green-600 rounded-xl" : ""}>
+                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
                           <ExclamationCircleIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></ExclamationCircleIcon>
                           My pending issues
                         </div>
@@ -283,8 +283,8 @@ export default function SideLayout({ children }) {
                     </Link>
 
                     <Link href={navigationPaths.allTickets}>
-                      <div className={isCurrentPath(navigationPaths.allTickets) ? "bg-green-600 rounded-md" : ""}>
-                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                      <div className={isCurrentPath(navigationPaths.allTickets) ? "bg-green-600 rounded-xl" : ""}>
+                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
                           <ArchiveIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></ArchiveIcon>
                           All issues
                         </div>
@@ -292,8 +292,8 @@ export default function SideLayout({ children }) {
                     </Link>
 
                     <Link href={navigationPaths.notebook}>
-                      <div className={isCurrentPath(navigationPaths.notebook) ? "bg-green-600 rounded-md" : ""}>
-                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                      <div className={isCurrentPath(navigationPaths.notebook) ? "bg-green-600 rounded-xl" : ""}>
+                        <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
                           <PencilIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></PencilIcon>
                           Notes
                         </div>
@@ -302,8 +302,8 @@ export default function SideLayout({ children }) {
 
                     {session.user.isAdmin ? (
                         <Link href={administrationNavigationPaths.users}>
-                          <div className={isCurrentPath(administrationNavigationPaths.users) ? "bg-green-600 rounded-md" : ""}>
-                            <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                          <div className={isCurrentPath(administrationNavigationPaths.users) ? "bg-green-600 rounded-xl" : ""}>
+                            <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
                               <UserCircleIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></UserCircleIcon>
                               User management
                             </div>
@@ -341,7 +341,7 @@ export default function SideLayout({ children }) {
           <div className="flex flex-col w-0 flex-1 bg-slate-100">
             <div className="lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
               <button
-                className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-xl text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                 onClick={() => setSidebarOpen(true)}
               >
                 <span className="sr-only">Open sidebar</span>

@@ -89,7 +89,7 @@ export default function UpdateUserModal({ user }) {
                 <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
                   <button
                     type="button"
-                    className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="bg-white rounded-xl text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close</span>
@@ -127,7 +127,7 @@ export default function UpdateUserModal({ user }) {
                           Role:
                         </div>
                         <div className="mt-2 space-y-2 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-                          <span className="relative z-0 inline-flex shadow-sm rounded-md space-x-4">
+                          <span className="relative z-0 inline-flex shadow-sm rounded-xl space-x-4">
                             <button
                               onClick={() => setAdmin(false)}
                               type="button"
@@ -158,7 +158,7 @@ export default function UpdateUserModal({ user }) {
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <button
                     type="button"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-800 text-base font-semibold text-white hover:bg-green-600 duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800 sm:ml-3 sm:w-auto sm:text-sm"
+                    className="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-emerald-800 text-base font-semibold text-white hover:bg-green-600 duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={async () => {
                       await updateUser();
                     }}
