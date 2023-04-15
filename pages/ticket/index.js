@@ -183,9 +183,9 @@ export default function Tickets() {
   const router = useRouter();
   const { data, status, error, refetch } = useQuery("pendingIssues", getUserTickets);
 
-  const high = "bg-red-100 text-red-800";
-  const low = "bg-blue-100 text-blue-800";
-  const normal = "bg-green-100 text-green-800";
+  const high = "text-red-900 ring-red-900 bg-red-100 ring-2 w-16 text-center";
+  const low = "bg-blue-100 text-blue-800 ring-blue-800 ring-2 w-16 text-center";
+  const normal = "bg-green-100 text-emerald-800 ring-emerald-800 ring-2 w-16 text-center";
 
   const columns = React.useMemo(() => [
     {
@@ -221,7 +221,7 @@ export default function Tickets() {
         return (
           <>
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge}`}
+              className={`inline-block items-center px-2.5 py-1 rounded-full text-xs font-medium ${badge}`}
             >
               {value}
             </span>
