@@ -1,13 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useQuery } from "react-query";
-import {
-  useTable,
-  useFilters,
-  useGlobalFilter,
-  usePagination,
-} from "react-table";
+import { useTable, useFilters, useGlobalFilter, usePagination } from "react-table";
 import Link from "next/link";
 import Loader from "react-spinners/ClipLoader";
+import {useRouter} from "next/router";
+import {ArrowCircleLeftIcon, ArrowCircleRightIcon} from "@heroicons/react/solid";
 
 
 import TicketsMobileList from "../components/TicketsMobileList";
@@ -20,7 +17,7 @@ async function getUserTickets() {
 function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
   return (
     <input
-      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+      className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block w-full sm:text-sm border-gray-300 ring-gray-300 rounded-md"
       type="text"
       value={filterValue || ""}
       onChange={(e) => {
@@ -106,11 +103,11 @@ function Table({ columns, data }) {
                     column.hideHeader === false ? null : (
                       <th
                         {...column.getHeaderProps()}
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-sm font-bold text-emerald-800 uppercase tracking-wider cursor-default"
                       >
                         {column.render("Header")}
                         {/* Render the columns filter UI */}
-                        <div>
+                        <div className="mt-2">
                           {column.canFilter ? column.render("Filter") : null}
                         </div>
                       </th>
@@ -148,12 +145,12 @@ function Table({ columns, data }) {
                   htmlFor="location"
                   className="block text-sm font-medium text-gray-700 mt-4"
                 >
-                  Show
+                  Display
                 </p>
                 <select
                   id="location"
                   name="location"
-                  className="block w-full pl-3 pr-10 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  className="block w-full pl-3 pr-10 text-base border-gray-300 focus:outline-none focus:ring-emerald-800 focus:border-emerald-800 sm:text-sm rounded-md cursor-pointer"
                   value={pageSize}
                   onChange={(e) => {
                     setPageSize(Number(e.target.value));
@@ -167,23 +164,15 @@ function Table({ columns, data }) {
                 </select>
               </div>
             </div>
-            <div className="flex-1 flex justify-between sm:justify-end">
-              <button
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                type="button"
-                onClick={() => previousPage()}
-                disabled={!canPreviousPage}
-              >
-                Previous
-              </button>
-              <button
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                type="button"
-                onClick={() => nextPage()}
-                disabled={!canNextPage}
-              >
-                Next
-              </button>
+            <div className="flex-1 flex justify-between sm:justify-end items-center">
+              <ArrowCircleLeftIcon
+                  className="flex-shrink-0 mr-1 h-8 w-8 text-emerald-800 cursor-pointer hover:text-gray-800 duration-300"
+                  onClick={() => canPreviousPage ? previousPage() : null}
+              ></ArrowCircleLeftIcon>
+              <ArrowCircleRightIcon
+                  className="flex-shrink-0 mr-1 h-8 w-8 ml-2 text-emerald-800 cursor-pointer hover:text-gray-800 duration-300"
+                  onClick={() => canNextPage ? nextPage() : null}
+              ></ArrowCircleRightIcon>
             </div>
           </nav>
         </div>
@@ -193,48 +182,44 @@ function Table({ columns, data }) {
 }
 
 export default function TicketHitory() {
-  const { data, status, error } = useQuery("userTickets", getUserTickets);
+  const router = useRouter();
+  const { data, status, error, refetch } = useQuery("allIssues", getUserTickets);
 
-  const high = "bg-red-100 text-red-800";
+  const pendingIssue = "bg-red-800 text-white";
+  const resolvedIssue = "bg-green-800 text-white";
+
+  const high = "text-red-950 text-red-800";
   const low = "bg-blue-100 text-blue-800";
   const normal = "bg-green-100 text-green-800";
 
   const columns = React.useMemo(() => [
     {
-      Header: "No.",
-      accessor: "id",
-      width: 10,
-      id: "id",
+      Header: "Title",
+      accessor: "title",
+      id: "title",
+      Cell: ({ value }) => {
+        return <div className="truncate wmde-markdown">{value}</div>;
+      },
     },
     {
-      Header: "Name",
-      accessor: "name",
-      id: "name",
-    },
-    {
-      Header: "Client",
-      accessor: "client.name",
-      id: "client_name",
-    },
-    {
-      Header: "Engineer",
+      Header: "Responsible",
       accessor: "assignedTo.name",
-      id: "engineer",
+      id: "responsible",
     },
     {
       Header: "Status",
-      accessor: (data) => (data.isComplete ? "Completed" : "Outstanding"),
+      accessor: (data) => (data.isComplete ? "Completed" : "Pending"),
       id: "status",
 
       Cell: ({ value }) => {
         let p = value;
         let badge;
 
-        if (p === "Outstanding") {
-          badge = high;
+        if (p === "Pending") {
+          badge = pendingIssue;
         }
         if (p === "Completed") {
-          badge = low;
+          badge = resolvedIssue;
         }
 
         return (
@@ -278,25 +263,24 @@ export default function TicketHitory() {
       },
     },
     {
-      Header: "Title",
-      accessor: "title",
-      id: "title",
-      Cell: ({ value }) => {
-        return <div className="truncate">{value}</div>;
-      },
-    },
-    {
       Header: "",
       id: "actions",
-      Cell: ({ row, value }) => {
+        Cell: ({ row, value }) => {
         return (
           <>
-            <Link href={`/ticket/${row.cells[0].value}`}>View</Link>
+            <Link href={`/ticket/${row.original.id}`}>
+              <button className="bg-emerald-800 px-4 py-2 text-white font-semibold rounded-xl hover:bg-gray-800 duration-300">To ticket</button>
+            </Link>
           </>
         );
       },
     },
   ]);
+
+  useEffect(() => {
+    refetch();
+
+  }, [router.query])
 
   return (
     <div>
