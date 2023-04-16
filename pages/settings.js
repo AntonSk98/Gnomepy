@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { message } from "antd";
 import { useSession, signOut } from "next-auth/react";
 
 import UserProfile from "../components/UserProfile";
+import {errorNotification, successNotification} from "../notifications/notifications";
 
 export default function Settings() {
   const { data: session } = useSession();
 
   const linkStyles = {
     active:
-      "w-full bg-teal-50 border-teal-500 text-teal-700 hover:bg-teal-50 hover:text-teal-700 group border-l-4 px-3 py-2 flex items-center text-sm font-medium",
+      "w-full bg-emerald-800 border-emerald-600 text-white hover:text-white hover:bg-gray-800 hover:border-gray-800 group border-l-4 px-3 py-2 flex items-center text-sm font-semibold duration-500",
     inactive:
-      "w-full border-transparent text-gray-900 hover:bg-gray-50 hover:text-gray-900 group mt-1 border-l-4 px-3 py-2 flex items-center text-sm font-medium",
+      "w-full text-emerald-800 border-transparent group mt-1 border-l-4 px-3 hover:text-white py-2 flex items-center text-sm font-semibold hover:bg-gray-800 hover:border-gray-800 duration-500",
   };
 
   const [showProfile, setShowProfile] = useState(true);
@@ -19,15 +19,7 @@ export default function Settings() {
   const [password, setPassword] = useState("");
   const [check, setCheck] = useState("");
 
-  const success = () => {
-    message.success("Password updated");
-  };
-
-  const fail = (f) => {
-    message.error(`${f}`);
-  };
-
-  const postData = async () => {
+  const updatePassword = async () => {
     const id = session.id;
     if (check === password) {
       await fetch(`/api/v1/users/resetpassword`, {
@@ -43,13 +35,17 @@ export default function Settings() {
         .then((res) => res.json())
         .then((res) => {
           if (res.failed === false) {
-            success();
+            successNotification('Password was successfully updated!');
           } else {
-            fail(res.message);
+            errorNotification('Something went wrong while updating the password...');
           }
+          setPassword("");
+          setCheck("");
+          setShowPassword(false);
+          setShowProfile(true);
         });
     } else {
-      fail("Passwords are not the same");
+      errorNotification('Sorry...Try again a bit later...')
     }
   };
 
@@ -72,7 +68,7 @@ export default function Settings() {
                     aria-current="page"
                   >
                     <svg
-                      className="text-teal-500 group-hover:text-teal-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6"
+                      className="group-hover:text-white flex-shrink-0 -ml-1 mr-3 h-6 w-6"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -80,9 +76,9 @@ export default function Settings() {
                       aria-hidden="true"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
@@ -99,7 +95,7 @@ export default function Settings() {
                     }
                   >
                     <svg
-                      className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6"
+                      className="flex-shrink-0 -ml-1 mr-3 h-6 w-6"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -107,9 +103,9 @@ export default function Settings() {
                       aria-hidden="true"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
                       />
                     </svg>
@@ -121,7 +117,7 @@ export default function Settings() {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6"
+                      className="flex-shrink-0 -ml-1 mr-3 h-6 w-6"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -144,27 +140,31 @@ export default function Settings() {
                   </div>
                 </div>
                 <div className={`${showPassword ? "" : "hidden"}`}>
+                  <div>
+                    <h2 className="px-4 mx-2 my-5 text-lg leading-6 font-bold text-emerald-800">Change password</h2>
+                  </div>
                   <div className="m-2 space-y-4 p-4">
                     <input
                       type="password"
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-xl"
+                      className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block sm:text-sm border-gray-300 rounded-xl shadow-md w-full"
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter users new password"
+                      placeholder="New password..."
                     />
-
                     <input
                       type="password"
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-xl"
+                      className="shadow-sm focus:ring-emerald-800 focus:border-emerald-800 block sm:text-sm border-gray-300 rounded-xl shadow-md w-full"
                       onChange={(e) => setCheck(e.target.value)}
-                      placeholder="Confirm users password"
+                      placeholder="Confirm password..."
                     />
-                    <button
-                      type="button"
-                      className=" float-right w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
-                      onClick={() => postData()}
-                    >
-                      Update
-                    </button>
+                    <div className="mt-4 py-4 px-4 flex justify-end sm:px-6">
+                      <button
+                          type="button"
+                          className="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-emerald-800 text-base font-semibold text-white hover:bg-green-600 duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800 sm:ml-3 sm:w-auto sm:text-sm"
+                          onClick={() => updatePassword()}
+                      >
+                        Update password
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
