@@ -14,7 +14,7 @@ export default async function getAllClients(req, res) {
 
     res.json({ users, failed: false });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error });
   }
 }

@@ -10,7 +10,7 @@ export default async function create(req, res) {
   try {
 
     if (!todo) {
-      console.log("No text found!");
+      console.error("No todo was received!");
       return res.status(422);
     } else {
       await prisma.todos.create({
@@ -23,7 +23,7 @@ export default async function create(req, res) {
     }
     
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500);
   }
 }

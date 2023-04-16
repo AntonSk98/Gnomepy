@@ -233,7 +233,6 @@ export default function Tickets() {
       Header: "",
       id: "actions",
       Cell: ({ row, value }) => {
-        console.log(row.original.id)
         return (
           <>
             <Link href={`/ticket/${row.original.id}`}>

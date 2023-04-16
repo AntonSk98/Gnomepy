@@ -18,8 +18,6 @@ export default async function oneDone(req, res) {
   try {
     const todo = await doesTodoExist(id);
 
-    console.log(todo);
-
     if (!todo) {
       return res.status(404).json({
         success: false,
@@ -35,15 +33,15 @@ export default async function oneDone(req, res) {
             done: true,
           },
         });
-        console.log("Updated record");
+        console.info("Updated todo");
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
 
     res.status(201).json({ success: true, message: "Marked as Done" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500);
   }
 }

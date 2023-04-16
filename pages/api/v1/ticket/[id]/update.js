@@ -17,7 +17,7 @@ export default async function updateTicket(req,res) {
     });
     res.status(201).json({ success: true, message: "Issue was successfully updated!" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500);
   }
 }

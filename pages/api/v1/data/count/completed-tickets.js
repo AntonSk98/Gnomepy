@@ -2,7 +2,7 @@ const { prisma } = require("../../../../../prisma/prisma");
 import { getSession } from "next-auth/react";
 
 
-export default async function handler(req, res) {
+export default async function GetResolvedIssues(req, res) {
   const session = await getSession({ req });
 
 
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({ result });
   } catch (error) {
-    console.log(error);
+    console.error('Unexpected error occurred while getting resolved issues!');
     res.status(500).json({ error });
   }
 }

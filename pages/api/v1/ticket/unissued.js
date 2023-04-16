@@ -10,7 +10,7 @@ export default async function getUnissued(req,res) {
         res.status(200).json({ tickets });
       });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500);
   }
 }

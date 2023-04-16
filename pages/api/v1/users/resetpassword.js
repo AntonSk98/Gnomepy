@@ -17,7 +17,7 @@ export default async function getAllClients(req, res) {
       .status(201)
       .json({ message: "password updated success", failed: false });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error });
   }
 }

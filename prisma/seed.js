@@ -13,7 +13,7 @@ async function initialize() {
     },
   });
 
-  console.log("Created initial admin: ", {admin});
+  console.info("Created initial admin: ", {admin});
 }
 
 initialize()

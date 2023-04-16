@@ -16,7 +16,7 @@ export default async function transferTicket(req, res) {
 
     res.status(200).json({ message: "Ticket Transferred" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500);
   }
 }

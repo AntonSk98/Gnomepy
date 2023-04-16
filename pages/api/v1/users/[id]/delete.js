@@ -10,7 +10,7 @@ export default async function deleteUser(req, res) {
     });
     return res.status(201).json({ message: "User deleted", fail: false });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error });
   }
 }

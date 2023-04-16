@@ -33,7 +33,6 @@ export default function UserProfile() {
         });
         if (response.ok) {
             await getUserData();
-            console.log({name, email})
             await response.json();
             successNotification('Successfully updated profile data!');
         } else {
@@ -42,7 +41,6 @@ export default function UserProfile() {
     }
 
     useEffect(() => {
-        console.log('hi!')
         getUserData();
     }, []);
 

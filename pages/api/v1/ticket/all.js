@@ -14,7 +14,7 @@ export default async function allTickets(req,res) {
         res.status(200).json({ tickets });
       });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500);
   }
 }

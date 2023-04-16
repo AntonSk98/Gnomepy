@@ -26,6 +26,6 @@ export default async function createUser(req, res) {
       res.status(400).json({ message: "You are not an admin ", success: true });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
