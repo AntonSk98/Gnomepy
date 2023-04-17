@@ -76,15 +76,7 @@ export default function Dashboard() {
         errorNotification(`File upload failed...`);
       }
     },
-    showUploadList: false,
-    progress: {
-      strokeColor: {
-        "0%": "#1F2937",
-        "100%": "#065F46",
-      },
-      strokeWidth: 3,
-      format: (percent) => `${parseFloat(percent.toFixed(2))}%`,
-    },
+    showUploadList: false
   };
 
   useEffect(() => {

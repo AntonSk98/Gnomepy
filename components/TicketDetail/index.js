@@ -110,15 +110,7 @@ export default function TicketDetail(details) {
       } else if (info.file.status === "error") {
         errorNotification(`File upload failed....`);
       }
-    },
-    progress: {
-      strokeColor: {
-        "0%": "#108ee9",
-        "100%": "#87d068",
-      },
-      strokeWidth: 3,
-      format: (percent) => `${parseFloat(percent.toFixed(2))}%`,
-    },
+    }
   };
 
   const high = "bg-red-100 text-red-800";
