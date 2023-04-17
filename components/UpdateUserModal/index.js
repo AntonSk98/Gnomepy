@@ -34,7 +34,7 @@ export default function UpdateUserModal({ user }) {
 
     if (response.ok) {
       successNotification('Successfully updated the user!');
-      await router.replace(router.pathname + '?instant=' + Date.now(), router.pathname);
+      await router.replace(router.asPath + '?instant=' + Date.now(), router.asPath);
     } else {
       errorNotification('Unexpected error occurred!');
     }

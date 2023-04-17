@@ -30,8 +30,6 @@ export default function TransferTicket({ id }) {
       });
   };
 
-  console.log(users);
-
   async function postData() {
     await fetch(`/api/v1/ticket/${id}/transfer`, {
       method: "POST",

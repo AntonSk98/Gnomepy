@@ -84,7 +84,7 @@ export default function CreateTicketModal() {
       });
 
       if (response.ok) {
-        await router.replace(router.pathname + '?instant=' + Date.now(), router.pathname);
+        await router.replace(router.asPath + '?instant=' + Date.now(), router.asPath);
         successNotification('New issue was successfully created!');
       } else {
         errorNotification('Something went wrong while creating a new issue...')

@@ -70,10 +70,10 @@ export default function Dashboard() {
     },
     onChange(info) {
       if (info.file.status === "done") {
-        successNotification(`${info.file.name} file uploaded successfully`)
+        successNotification(`File uploaded successfully!`);
         setUploaded(true);
       } else if (info.file.status === "error") {
-        errorNotification(`${info.file.name} file upload failed.`);
+        errorNotification(`File upload failed...`);
       }
     },
     showUploadList: false,

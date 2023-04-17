@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { message, Upload, Divider } from "antd";
+import {Upload } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
 
@@ -10,37 +10,63 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import TicketFiles from "../TicketFiles";
 import TransferTicket from "../TransferTicket";
+import {errorNotification, successNotification} from "../../notifications/notifications";
+import {UploadIcon} from "@heroicons/react/outline";
 
-export default function TicketDetail(props) {
-  const [ticket, setTicket] = useState(props.ticket);
+export default function TicketDetail(details) {
+  const [createdAt, setCreatedAt] = useState();
+  const [updatedAt, setUpdatedAt] = useState();
+  const [assignedTo, setAssignedTo] = useState("");
+  const [assignedToEmail, setAssignedToEmail] = useState();
+  const [isTicketComplete, setIsTicketComplete] = useState();
+  const [ticketId, setTicketId] = useState();
+  const [priority, setPriority] = useState();
+  const [note, setNote] = useState("");
+  const [issue, setIssue] = useState("");
+  const [title, setTitle] = useState("");
+  const [email, setEmail] = useState("");
+  const [uploaded, setUploaded] = useState(false);
+
+  const [badge, setBadge] = useState("");
   const [edit, setEdit] = useState(false);
 
-  const [note, setNote] = useState(props.ticket.note);
-  const [issue, setIssue] = useState(props.ticket.detail);
-  const [title, setTitle] = useState(props.ticket.title);
-  const [name, setName] = useState(props.ticket.name);
-  const [email, setEmail] = useState(props.ticket.email);
-  const [number, setNumber] = useState(props.ticket.number);
-  const [badge, setBadge] = useState("");
-  const [uploaded, setUploaded] = useState();
+  const router = useRouter();
 
-  const history = useRouter();
-
-  const { id } = history.query;
+  const { id } = router.query;
 
   let file = [];
 
-  useEffect(() => {
-    if (ticket.priority === "Low") {
+  const setBadgeClasses = () => {
+    if (priority === "Low") {
       setBadge(low);
     }
-    if (ticket.priority === "Normal") {
+    if (priority === "Normal") {
       setBadge(normal);
     }
-    if (ticket.priority === "High") {
+    if (priority === "High") {
       setBadge(high);
     }
-  }, []);
+  }
+
+  const setTicketDetails = () => {
+    setTicketId(details.ticket.id);
+    setCreatedAt(details.ticket.createdAt);
+    setUpdatedAt(details.ticket.updatedAt)
+    setPriority(details.ticket.priority);
+    setNote(details.ticket.note);
+    setIssue(details.ticket.details);
+    setTitle(details.ticket.title);
+    setEmail(details.ticket.email);
+    setAssignedTo(details.ticket.assignedTo.name);
+    setIsTicketComplete(details.ticket.isComplete);
+    setAssignedToEmail(details.ticket.assignedTo.email)
+  }
+
+
+  useEffect(() => {
+    setTicketDetails();
+    setBadgeClasses();
+  }, [details]);
 
   async function update() {
     await fetch(`/api/v1/ticket/${id}/update`, {
@@ -63,7 +89,7 @@ export default function TicketDetail(props) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        status: !props.ticket.isComplete,
+        status: !isTicketComplete,
       }),
     }).then((res) => res.json());
   }
@@ -76,17 +102,13 @@ export default function TicketDetail(props) {
       let data = new FormData();
       data.append("file", file);
       data.append("filename", file.name);
-      data.append("ticket", ticket.id);
     },
     onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
       if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
+        successNotification(`File uploaded successfully!`);
         setUploaded(true);
       } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+        errorNotification(`File upload failed....`);
       }
     },
     progress: {
@@ -131,8 +153,8 @@ export default function TicketDetail(props) {
                             : "hidden"
                         }
                       />
-                      <p className="mt-2 text-sm font-bold">
-                        opened by user: {ticket.name}</p>
+                      <div className="mt-2 text-sm font-bold">
+                        Reported by: <span className="font-semibold">{email}</span></div>
                     </div>
                   </div>
 
@@ -143,21 +165,7 @@ export default function TicketDetail(props) {
                           type="button"
                           className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
                         >
-                          <svg
-                            className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 20 20"
-                            stroke="currentColor"
-                            aria-hidden="true"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                            />
-                          </svg>
+                          <UploadIcon className="h-5 w-5 mr-2 text-emerald-800 hover:text-gray-800 duration-300" aria-hidden="true"/>
                           <span>Upload</span>
                         </button>
                       </Upload>
@@ -210,11 +218,11 @@ export default function TicketDetail(props) {
                       </button>
                     </div>
                     <div className="mt-4 flex space-x-3 md:mt-0">
-                      {ticket.isComplete === false ? (
+                      {!isTicketComplete ? (
                         <button
                           onClick={async () => {
                             await updateStatus();
-                            history.push("/ticket");
+                            router.push("/ticket");
                           }}
                           type="button"
                           className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
@@ -237,7 +245,7 @@ export default function TicketDetail(props) {
                         <button
                           onClick={async () => {
                             await updateStatus();
-                            history.reload(history.pathname);
+                            router.reload(router.pathname);
                           }}
                           type="button"
                           className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
@@ -259,7 +267,7 @@ export default function TicketDetail(props) {
                       )}
                     </div>
                     <div className="mt-4 flex space-x-3 md:mt-0">
-                      <TransferTicket id={props.ticket.id} />
+                      <TransferTicket id={ticketId} />
                     </div>
                   </div>
 
@@ -355,11 +363,11 @@ export default function TicketDetail(props) {
               <h2 className="sr-only">Details</h2>
               <div className="space-y-5">
                 <div className="flex items-center">
-                  {ticket.isComplete ? (
+                  {isTicketComplete ? (
                     <div className="flex flex-row space-x-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-red-500"
+                        className="h-5 w-5 text-emerald-800"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -369,14 +377,14 @@ export default function TicketDetail(props) {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-red-500 text-sm font-bold">
-                        Completed
+                      <span className="font-bold text-emerald-800 text-sm cursor-default">
+                        Status: <span className="text-sm font-semibold">Resolved</span>
                       </span>
                     </div>
                   ) : (
                     <div className="flex-row flex space-x-2">
                       <svg
-                        className="h-5 w-5 text-green-500"
+                        className="h-5 w-5 text-blue-500"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
@@ -384,22 +392,22 @@ export default function TicketDetail(props) {
                       >
                         <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
                       </svg>
-                      <span className="text-green-700 text-sm font-medium ">
-                        Issued
+                      <span className="font-bold text-blue-500 text-sm cursor-default">
+                        Status: <span className="text-sm font-semibold">Issued</span>
                       </span>
                     </div>
                   )}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge}`}
-                  >
-                    {ticket.priority}
+                <div className="flex items-center space-x-2 cursor-default">
+                  <span className="text-emerald-800 font-bold">Priority: <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge}`}
+                      >{priority}
+                    </span>
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-emerald-800"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -411,14 +419,13 @@ export default function TicketDetail(props) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="text-gray-900 text-sm font-medium">
-                    Created on{" "}
-                    <span>{moment(ticket.createdAt).format("DD/MM/YYYY")}</span>
+                  <span className="text-emerald-800 text-sm font-semibold cursor-default">
+                    <span>Created at:</span> <span className="font-semibold text-black">{moment(createdAt).format("DD.MM.YYYY")}</span>
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-emerald-800"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -430,35 +437,35 @@ export default function TicketDetail(props) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="text-gray-900 text-sm font-medium">
-                    Last updated{" "}
-                    <span>{moment(ticket.updatedAt).format("DD/MM/YYYY")}</span>
+                  <span className="text-emerald-800 text-sm font-semibold cursor-default">
+                    <span>Last updated at:</span> <span className="font-semibold text-black">{moment(updatedAt).format("DD.MM.YYYY")}</span>
                   </span>
                 </div>
               </div>
-              <div className="mt-6 border-t border-gray-200 py-6 space-y-8">
-                <div>
-                  <h2 className="text-sm font-medium text-gray-500">
-                    Assignees
+              <div className="mt-6 border-t-4 border-gray-200 py-4 space-y-8">
+                <div className="cursor-default">
+                  <h2 className="text-sm text-emerald-800 font-bold">
+                    Responsible
                   </h2>
-                  <ul className="mt-3 space-y-3">
+                  <ul className="mt-3 space-y-3 mb-0">
                     <li className="flex justify-start">
-                      <p href="#" className="flex items-center space-x-3">
+                      <div href="#" className="flex items-center space-x-3">
                         <div className="text-sm font-medium text-gray-900">
-                          <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-500">
+                          <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-emerald-800">
                             <span className="font-medium leading-none text-white">
-                              {ticket.assignedTo.name[0]}
+                              {assignedTo[0]}
                             </span>
                           </span>
                         </div>
-                        <span>{ticket.assignedTo.name}</span>
-                      </p>
+                        <span className="font-semibold">{assignedTo}</span>
+                      </div>
                     </li>
                   </ul>
-                  <Divider className="bg-gray-200" />
+                  {/*<Divider className="bg-gray-200" />*/}
                 </div>
               </div>
-              <div className="-mt-10">
+
+              <div className="border-t-4 border-gray-200 py-4">
                 <div className="flex flex-col">
                   <TicketFiles
                     id={id}
@@ -467,15 +474,14 @@ export default function TicketDetail(props) {
                   />
                 </div>
               </div>
-              <div className="mt-10">
+              <div className="py-4 border-t-4 border-gray-200 cursor-default">
                 <div>
-                  <Divider className="bg-gray-200" />
-                  <h2 className="text-sm font-medium text-gray-500">
-                    Contact Details
+                  <h2 className="text-sm font-bold text-emerald-800">
+                    Contact details
                   </h2>
                   <div className="flex flex-col">
-                    <span>Name - {ticket.name}</span>
-                    <span>Email - {ticket.email} </span>
+                    <span className="font-semibold"><span className="font-bold text-emerald-800">Name:</span> {assignedTo}</span>
+                    <span className="font-semibold"><span className="font-bold text-emerald-800">Email:</span> {assignedToEmail} </span>
                   </div>
                 </div>
               </div>
@@ -485,38 +491,47 @@ export default function TicketDetail(props) {
               <h2 className="sr-only">Details</h2>
               <div className="space-y-5">
                 <div className="flex items-center space-x-2">
-                  <svg
-                    className="h-5 w-5 text-green-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
-                  </svg>
-                  <span className="text-green-700 text-sm font-medium">
-                    {ticket.isComplete ? "Completed" : "Issued"}
+                  {isTicketComplete ? (
+                      <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-emerald-800"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                      >
+                        <path
+                            fillRule="evenodd"
+                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                            clipRule="evenodd"
+                        />
+                      </svg> ) : (
+                      <svg
+                          className="h-5 w-5 text-blue-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                      >
+                        <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
+                      </svg>
+                  )}
+
+                  <span className={isTicketComplete ? "font-bold text-emerald-800 text-sm cursor-default" : "font-bold text-blue-500 text-sm cursor-default"}>
+                        Status:
+                    <span className= {isTicketComplete ? "text-sm font-semibold" : "text-sm font-semibold text-blue-500"}>
+                      {isTicketComplete ? " Resolved" : " Issued"}
+                    </span>
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2 cursor-default">
+                  <span className="text-emerald-800 font-bold">Priority: <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge}`}
+                  >{priority}
+                    </span>
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <svg
-                    className="h-5 w-5 text-gray-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>{ticket.assignedTo.name}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-emerald-800"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -528,14 +543,13 @@ export default function TicketDetail(props) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="text-gray-900 text-sm font-medium">
-                    Created on{" "}
-                    <span>{moment(ticket.createdAt).format("DD/MM/YYYY")}</span>
+                  <span className="text-emerald-800 text-sm font-semibold cursor-default">
+                    <span>Created at:</span> <span className="font-semibold text-black">{moment(createdAt).format("DD.MM.YYYY")}</span>
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-emerald-800"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -547,38 +561,37 @@ export default function TicketDetail(props) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="text-gray-900 text-sm font-medium">
-                    Last updated{" "}
-                    <span>{moment(ticket.updatedAt).format("DD/MM/YYYY")}</span>
+                  <span className="text-emerald-800 text-sm font-semibold cursor-default">
+                    <span>Last updated at:</span> <span className="font-semibold text-black">{moment(updatedAt).format("DD.MM.YYYY")}</span>
                   </span>
                 </div>
               </div>
-              <div className="mt-6 border-t border-b border-gray-200 py-6 space-y-8">
+              <div className="mt-6 border-t-4 border-gray-200 py-4 space-y-8 mb-0 pb-2">
                 <div>
-                  <h2 className="text-sm font-medium text-gray-500">
-                    Assignees
+                  <h2 className="text-sm font-bold text-emerald-800">
+                    Responsible
                   </h2>
                   <ul className="mt-3 space-y-3">
                     <li className="flex justify-start">
                       <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0">
-                          <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-500">
+                          <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-emerald-800">
                             <span className="font-medium leading-none text-white">
-                              {ticket.assignedTo
-                                ? ticket.assignedTo.name[0]
+                              {assignedTo
+                                ? assignedTo[0]
                                 : ""}
                             </span>
                           </span>
                         </div>
-                        <div className="text-sm font-medium text-gray-900">
-                          <span> {ticket.assignedTo.name}</span>
+                        <div className="text-sm font-semibold">
+                          <span> {assignedTo}</span>
                         </div>
                       </div>
                     </li>
                   </ul>
                 </div>
               </div>
-              <div className="mt-6">
+              <div className="border-t-4 border-gray-200 py-4">
                 <div className="flex flex-col">
                   <TicketFiles
                     id={id}
@@ -587,14 +600,14 @@ export default function TicketDetail(props) {
                   />
                 </div>
               </div>
-              <div className="mt-6">
+              <div className="py-4 border-t-4 border-gray-200 cursor-default">
                 <div>
-                  <h2 className="text-sm font-medium text-gray-500">
-                    Contact Details
+                  <h2 className="text-sm font-bold text-emerald-800">
+                    Contact details
                   </h2>
                   <div className="flex flex-col">
-                    <span>Name - {ticket.name}</span>
-                    <span>Email - {ticket.email} </span>
+                    <span className="font-semibold"><span className="font-bold text-emerald-800">Name:</span> {assignedTo}</span>
+                    <span className="font-semibold"><span className="font-bold text-emerald-800">Email:</span> {assignedToEmail} </span>
                   </div>
                 </div>
               </div>

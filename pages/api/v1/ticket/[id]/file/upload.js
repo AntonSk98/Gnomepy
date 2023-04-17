@@ -4,6 +4,12 @@ import { IncomingForm } from "formidable";
 import fs from "fs";
 import { createNecessaryDirectoriesSync } from "filesac";
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 export default async function UploadFile(req, res) {
 
   const { id } = req.query;
@@ -19,7 +25,6 @@ export default async function UploadFile(req, res) {
 
     form.parse(req, (err, fields, files) => {
       const f = files.file;
-
       const u = `${uploadPath}/${f.originalFilename}`;
 
       fs.rename(`./storage/${f.newFilename}`, u, async function (err) {
@@ -35,9 +40,7 @@ export default async function UploadFile(req, res) {
               },
             })
             .catch((err) => console.error(err));
-          return res
-            .status(200)
-            .json({ message: "File Uploaded", success: true });
+          return res.status(200).json({ message: "File Uploaded", success: true });
         } catch (error) {
           console.error(error);
           return res.status(500).json({ message: error, success: false });
@@ -46,6 +49,6 @@ export default async function UploadFile(req, res) {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error });
+    return res.status(500).json({ error });
   }
 }

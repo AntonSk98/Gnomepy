@@ -29,7 +29,7 @@ export default function CreateUser() {
     });
     if (response.ok) {
       successNotification('Successfully created a new user!');
-      await router.replace(router.pathname + '?instant=' + Date.now(), router.pathname);
+      await router.replace(router.asPath + '?instant=' + Date.now(), router.asPath);
     } else {
       errorNotification('Unexpected error occurred!');
     }
