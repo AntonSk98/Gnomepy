@@ -1,19 +1,17 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { Dialog, Transition, Listbox } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
-import { useRouter } from "next/router";
+import {ChatAlt2Icon, CheckIcon, SelectorIcon} from "@heroicons/react/solid";
+import {errorNotification, successNotification} from "../../notifications/notifications";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function TransferTicket({ id }) {
+export default function TransferTicket({ ticketId, responsibleId, callback }) {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState();
-  const [n, setN] = useState();
-
-  const router = useRouter();
+  const [selectedResponsible, setSelectedResponsible] = useState();
 
   const fetchUsers = async () => {
     await fetch(`/api/v1/users/all`, {
@@ -25,35 +23,46 @@ export default function TransferTicket({ id }) {
       .then((res) => res.json())
       .then((res) => {
         if (res) {
-          setUsers(res.users);
+          setUsers(res.users.filter(user => user.id !== responsibleId));
         }
       });
   };
 
   async function postData() {
-    await fetch(`/api/v1/ticket/${id}/transfer`, {
+    await fetch(`/api/v1/ticket/${ticketId}/transfer`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user: n,
+        user: selectedResponsible,
       }),
     });
   }
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [ticketId, responsibleId]);
+
+  function changeResponsible() {
+    postData()
+        .then(() => {
+          callback();
+          setOpen(false);
+          successNotification('Successfully changed the responsible!')
+        })
+        .catch(() => errorNotification('Unexpected error occurred...'))
+  }
 
   return (
     <div>
       <button
-        className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+        className="text-emerald-800 duration-300 inline-flex justify-center px-4 py-2 border border-emerald-800 ring-emerald-800 ring-2 shadow-sm text-sm font-medium rounded-xl bg-white hover:bg-emerald-800 hover:text-white duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800"
         onClick={() => {
           setOpen(true);
         }}
       >
+        <ChatAlt2Icon className="h-5 w-5 mr-2" aria-hidden="true"/>
         Transfer
       </button>
 
@@ -63,7 +72,7 @@ export default function TransferTicket({ id }) {
           className="fixed z-10 inset-0 overflow-y-auto"
           onClose={setOpen}
         >
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -92,7 +101,7 @@ export default function TransferTicket({ id }) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl h-64 sm:w-full sm:p-6">
+              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-xl sm:w-full">
                 <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
                   <button
                     type="button"
@@ -107,28 +116,30 @@ export default function TransferTicket({ id }) {
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                     <Dialog.Title
                       as="h3"
-                      className="text-lg leading-6 font-medium text-gray-900"
+                      className="text-lg leading-6 font-bold text-emerald-800"
                     >
-                      Transfer Ticket
+                      Transfer issue
                     </Dialog.Title>
-                    <div className="mt-2 pb-16">
-                      <Listbox value={n} onChange={setN} className="z-50">
+                    <div className="mt-2 pb-2">
+                      <Listbox value={selectedResponsible} onChange={setSelectedResponsible} className="z-50">
                         {({ open }) => (
                           <>
-                            <Listbox.Label className="block text-sm font-medium text-gray-700">
-                              Assigned to
+                            <Listbox.Label className="block text-base font-semibold text-emerald-800 mb-2">
+                              Assign to:
                             </Listbox.Label>
                             <div className="mt-1 relative">
-                              <Listbox.Button className="bg-white relative w-full border border-gray-300 rounded-xl shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <span className="block truncate">
-                                  {n ? n.name : "Please select new user"}
+                              <Listbox.Button className="relative w-full border border-emerald-800 rounded-xl shadow-lg pl-3 py-2 text-left cursor-default ring-2 ring-emerald-800 sm:text-sm">
+                                <div className="flex">
+                                  <span className="block truncate flex-1 truncate">
+                                  {selectedResponsible ? selectedResponsible.name : "Please select a new responsible"}
                                 </span>
-                                <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                <span className="inset-y-0 right-0 flex-0 flex items-center pr-2 pointer-events-none">
                                   <SelectorIcon
-                                    className="h-5 w-5 text-gray-400"
-                                    aria-hidden="true"
+                                      className="h-5 w-5 text-gray-400"
+                                      aria-hidden="true"
                                   />
                                 </span>
+                                </div>
                               </Listbox.Button>
 
                               <Transition
@@ -145,8 +156,8 @@ export default function TransferTicket({ id }) {
                                       className={({ active }) =>
                                         classNames(
                                           active
-                                            ? "text-white bg-indigo-600"
-                                            : "text-gray-900",
+                                            ? "text-white bg-emerald-800 text-white"
+                                            : "text-emerald-800",
                                           "cursor-default select-none relative py-2 pl-3 pr-9"
                                         )
                                       }
@@ -192,14 +203,11 @@ export default function TransferTicket({ id }) {
                       </Listbox>
 
                       <button
-                        onClick={() => {
-                          postData();
-                          router.reload(router.pathname);
-                        }}
+                        onClick={changeResponsible}
                         type="button"
-                        className="float-right mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        className="float-right mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-emerald-800 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800 duration-500"
                       >
-                        save
+                        Save
                       </button>
                     </div>
                   </div>

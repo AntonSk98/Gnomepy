@@ -1,6 +1,6 @@
 const { prisma } = require("../../../../../prisma/prisma");
 
-export default async function transferTicket(req, res) {
+export default async function TransferTicket(req, res) {
   const { id } = req.query;
   const { user } = req.body;
 
@@ -8,6 +8,7 @@ export default async function transferTicket(req, res) {
     await prisma.ticket.update({
       where: { id: Number(id) },
       data: {
+        updatedAt: new Date().toISOString(),
         assignedTo: {
           connect: { id: Number(user.id) },
         },

@@ -11,11 +11,18 @@ import "@uiw/react-markdown-preview/markdown.css";
 import TicketFiles from "../TicketFiles";
 import TransferTicket from "../TransferTicket";
 import {errorNotification, successNotification} from "../../notifications/notifications";
-import {UploadIcon} from "@heroicons/react/outline";
+import {TrashIcon, UploadIcon} from "@heroicons/react/outline";
+import {CheckCircleIcon, PaperAirplaneIcon, PencilAltIcon} from "@heroicons/react/solid";
 
 export default function TicketDetail(details) {
+
+  const callback = details.callback;
+
+  const router = useRouter();
+
   const [createdAt, setCreatedAt] = useState();
   const [updatedAt, setUpdatedAt] = useState();
+  const [assignedToId, setAssignedToId] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
   const [assignedToEmail, setAssignedToEmail] = useState();
   const [isTicketComplete, setIsTicketComplete] = useState();
@@ -29,8 +36,6 @@ export default function TicketDetail(details) {
 
   const [badge, setBadge] = useState("");
   const [edit, setEdit] = useState(false);
-
-  const router = useRouter();
 
   const { id } = router.query;
 
@@ -59,7 +64,8 @@ export default function TicketDetail(details) {
     setEmail(details.ticket.email);
     setAssignedTo(details.ticket.assignedTo.name);
     setIsTicketComplete(details.ticket.isComplete);
-    setAssignedToEmail(details.ticket.assignedTo.email)
+    setAssignedToEmail(details.ticket.assignedTo.email);
+    setAssignedToId(details.ticket.assignedTo.id);
   }
 
 
@@ -79,7 +85,10 @@ export default function TicketDetail(details) {
         note,
         title,
       }),
-    }).then((res) => res.json());
+    })
+        .then((res) => res.json())
+        .then(() => successNotification('Issue updated!'))
+        .catch(() => errorNotification('Something went wrong...'));
   }
 
   async function updateStatus() {
@@ -91,7 +100,25 @@ export default function TicketDetail(details) {
       body: JSON.stringify({
         status: !isTicketComplete,
       }),
-    }).then((res) => res.json());
+    })
+        .then((res) => res.json())
+        .then(() => {
+          callback();
+          successNotification('Successfully updated the status of the issue!')
+        })
+        .catch(error => {
+          errorNotification('Unexpected error occurred...')
+        });
+  }
+
+  async function deleteTicket() {
+    const response = await fetch(`/api/v1/ticket/${id}/delete`);
+    if (response.ok) {
+      successNotification('Successfully removed the ticket!');
+      router.replace('/ticket');
+      return;
+    };
+    errorNotification('Unexpected error occurred while removing the ticket...');
   }
 
   const propsUpload = {
@@ -122,17 +149,17 @@ export default function TicketDetail(details) {
       <div className="relative">
         <div className="py-8 xl:py-10">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 xl:max-w-5xl xl:grid xl:grid-cols-3 2xl:max-w-full">
-            <div className="xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
+            <div className="xl:col-span-2 xl:pr-8 xl:border-r-4 border-emerald-800">
               <div>
                 <div>
-                  <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b xl:pb-6">
+                  <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b-4 xl:pb-6 border-emerald-800">
                     <div className="w-1/2">
                       <h1
                         className={
-                          edit ? "hidden" : "text-2xl font-bold text-gray-900"
+                          edit ? "hidden" : "text-2xl font-semibold text-gray-900"
                         }
                       >
-                        {title}
+                        <span className="text-emerald-800 font-bold cursor-default">Title</span> {title}
                       </h1>
                       <input
                         type="text"
@@ -141,23 +168,23 @@ export default function TicketDetail(details) {
                         onChange={(e) => setTitle(e.target.value)}
                         className={
                           edit
-                            ? "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-xl"
+                            ? "shadow-sm block w-full sm:text-sm border-green-600 rounded-xl border-2 duration-500 focus:ring-emerald-800 focus:border-emerald-800 focus:ring-2"
                             : "hidden"
                         }
                       />
-                      <div className="mt-2 text-sm font-bold">
-                        Reported by: <span className="font-semibold">{email}</span></div>
+                      <div className="mt-2 text-sm font-bold text-emerald-800 cursor-default">
+                        Reported by: <span className="font-semibold text-black">{email}</span></div>
                     </div>
                   </div>
 
-                  <div className="flex flex-row p-1 mt-2 space-x-4">
-                    <div className="mt-4 -ml-2 flex space-x-3 md:mt-0">
+                  <div className="flex flex-row p-1 mt-2 gap-5 flex-wrap">
+                    <div className="mt-4 flex space-x-3 md:mt-0">
                       <Upload {...propsUpload}>
                         <button
                           type="button"
-                          className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                          className="text-emerald-800 duration-500 inline-flex justify-center px-4 py-2 border border-emerald-800 ring-emerald-800 ring-2 shadow-sm text-sm font-medium rounded-xl bg-white hover:bg-emerald-800 hover:text-white duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800"
                         >
-                          <UploadIcon className="h-5 w-5 mr-2 text-emerald-800 hover:text-gray-800 duration-300" aria-hidden="true"/>
+                          <UploadIcon className="h-5 w-5 mr-2" aria-hidden="true"/>
                           <span>Upload</span>
                         </button>
                       </Upload>
@@ -170,17 +197,9 @@ export default function TicketDetail(details) {
                       <button
                         onClick={() => setEdit(true)}
                         type="button"
-                        className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                        className="text-emerald-800 inline-flex justify-center px-4 py-2 border border-emerald-800 ring-emerald-800 ring-2 shadow-sm text-sm font-medium rounded-xl bg-white hover:bg-emerald-800 hover:text-white duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800"
                       >
-                        <svg
-                          className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                        </svg>
+                        <PencilAltIcon className="h-5 w-5 mr-2" aria-hidden="true"/>
                         <span>Edit</span>
                       </button>
                     </div>
@@ -195,17 +214,9 @@ export default function TicketDetail(details) {
                           await update();
                         }}
                         type="button"
-                        className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                        className="text-emerald-800 inline-flex justify-center px-4 py-2 border border-emerald-800 ring-emerald-800 ring-2 shadow-sm text-sm font-medium rounded-xl bg-white hover:bg-emerald-800 hover:text-white duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800"
                       >
-                        <svg
-                          className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                        </svg>
+                        <CheckCircleIcon className="h-5 w-5 mr-2" aria-hidden="true"/>
                         <span>Save</span>
                       </button>
                     </div>
@@ -214,57 +225,44 @@ export default function TicketDetail(details) {
                         <button
                           onClick={async () => {
                             await updateStatus();
-                            router.push("/ticket");
                           }}
                           type="button"
-                          className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                          className="text-emerald-800 inline-flex justify-center px-4 py-2 border border-emerald-800 ring-emerald-800 ring-2 shadow-sm text-sm font-medium rounded-xl bg-white hover:bg-emerald-800 hover:text-white duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                          <CheckCircleIcon className="h-5 w-5 mr-2" aria-hidden="true"/>
                           <span>Complete</span>
                         </button>
                       ) : (
                         <button
                           onClick={async () => {
                             await updateStatus();
-                            router.reload(router.pathname);
                           }}
                           type="button"
-                          className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                          className="text-emerald-800 inline-flex justify-center px-4 py-2 border border-emerald-800 ring-emerald-800 ring-2 shadow-sm text-sm font-medium rounded-xl bg-white hover:bg-emerald-800 hover:text-white duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-800"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                          <PaperAirplaneIcon className="h-5 w-5 mr-2" aria-hidden="true"/>
                           <span>Reopen</span>
                         </button>
                       )}
                     </div>
                     <div className="mt-4 flex space-x-3 md:mt-0">
-                      <TransferTicket id={ticketId} />
+                      <TransferTicket ticketId={ticketId} responsibleId={assignedToId} callback={callback}/>
+                    </div>
+
+                    <div className="mt-4 flex space-x-3 md:mt-0">
+                      <button
+                          type="button"
+                          className="text-red-800 inline-flex justify-center px-4 py-2 border border-red-800 ring-red-800 ring-2 shadow-sm text-sm font-medium rounded-xl bg-white hover:bg-red-800 hover:text-white duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-800"
+                          onClick={deleteTicket}
+                      >
+                        <TrashIcon className="h-5 w-5 mr-2" aria-hidden="true"/>
+                        <span>Delete</span>
+                      </button>
                     </div>
                   </div>
 
                   <div className="py-3 xl:pt-6 xl:pb-0 ">
-                    <h1 className="text-xl">Issue</h1>
+                    <h1 className="text-xl font-bold text-emerald-800">Issue</h1>
                     <div className={edit ? "hidden" : "prose max-w-none"}>
                       {issue ? (
                         <MDEditor.Markdown
@@ -272,9 +270,8 @@ export default function TicketDetail(details) {
                           rehypePlugins={[[rehypeSanitize]]}
                         />
                       ) : (
-                        <span>
-                          No issue has been entered yet ... Click edit to enter
-                          an issue
+                        <span className="font-semibold">
+                          No details are provided for this issue...
                         </span>
                       )}
                     </div>
@@ -310,7 +307,7 @@ export default function TicketDetail(details) {
                 <div className="pb-4">
                   <h2
                     id="activity-title"
-                    className="text-lg font-medium text-gray-900"
+                    className="text-lg font-bold text-emerald-800"
                   >
                     Activity
                   </h2>
@@ -323,7 +320,7 @@ export default function TicketDetail(details) {
                       rehypePlugins={[[rehypeSanitize]]}
                     />
                   ) : (
-                    <span>No work has been entered yet</span>
+                    <span className="font-semibold">No activity was submitted yet...</span>
                   )}
                 </div>
                 <div className={edit ? "mt-3" : "hidden"}>

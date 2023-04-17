@@ -19,11 +19,15 @@ export default function Ticket() {
 
   };
 
-  const { data, status } = useQuery("fetchTicketById", fetchTicketById);
+  const { data, status, refetch } = useQuery("fetchTicketById", fetchTicketById);
 
   function getTicket() {
     return data.tickets;
   }
+
+  const handleClick = () => {
+    refetch();
+  };
 
   return (
     <div>
@@ -45,7 +49,7 @@ export default function Ticket() {
 
       {status === "success" && (
         <div>
-          <TicketDetail ticket={getTicket()} />
+          <TicketDetail ticket={getTicket()} callback={handleClick}/>
         </div>
       )}
     </div>

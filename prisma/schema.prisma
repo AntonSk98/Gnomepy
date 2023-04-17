@@ -54,7 +54,7 @@ model TicketFile {
   filename  String
   path      String
   ticketId  Int
-  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
 
 model Notes {
