@@ -2,10 +2,7 @@ import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   ArchiveIcon, ExclamationCircleIcon,
-  FolderIcon,
-  HomeIcon,
   MenuIcon,
-  TicketIcon,
   XIcon,
 } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
@@ -14,10 +11,6 @@ import Link from "next/link";
 
 import CreateTicketModal from "../CreateTicketModal";
 import {IdentificationIcon, PencilIcon, UserCircleIcon} from "@heroicons/react/solid";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 const isCurrentPath = (path) => {
   return location.pathname === path;
@@ -48,42 +41,6 @@ export default function SideLayout({ children }) {
   const administrationNavigationPaths = {
     users: "/admin/users"
   }
-
-  const navigation = [
-    {
-      name: "Tickets",
-      href: "/ticket",
-      icon: TicketIcon,
-      current: location.pathname === "/ticket" ? true : false,
-    },
-    {
-      name: "History",
-      href: "/history",
-      icon: ArchiveIcon,
-      current: location.pathname === "/history" ? true : false,
-    },
-    {
-      name: "Personal Notebook",
-      href: "/notebook",
-      icon: FolderIcon,
-      current: location.pathname === "/notebook" ? true : false,
-    },
-  ];
-
-  const secondaryNavigation = [
-    {
-      name: "Users",
-      href: "/admin/auth",
-    },
-    {
-      name: "Clients",
-      href: "/admin/clients",
-    },
-    {
-      name: "Settings",
-      href: "/admin/settings",
-    },
-  ];
 
   return (
     <div>
@@ -120,7 +77,7 @@ export default function SideLayout({ children }) {
                 leaveFrom="translate-x-0"
                 leaveTo="-translate-x-full"
               >
-                <div className="relative flex-1 flex flex-col max-w-xs w-full bg-blue-500">
+                <div className="relative flex-1 flex flex-col max-w-xs w-full bg-emerald-800">
                   <Transition.Child
                     as={Fragment}
                     enter="ease-in-out duration-300"
@@ -130,7 +87,7 @@ export default function SideLayout({ children }) {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                    <div className="absolute top-0 right-0 -mr-12 pt-2">
+                    <div className="absolute top-0 right-0 -mr-12 pt-2 ">
                       <button
                         className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                         onClick={() => setSidebarOpen(false)}
@@ -143,102 +100,92 @@ export default function SideLayout({ children }) {
                       </button>
                     </div>
                   </Transition.Child>
-                  <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-                    <div className="flex items-center flex-shrink-0 px-4">
+                  <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto bg-emerald-800">
+                    <div className="flex items-start flex-shrink-0 px-4">
                       <img
                         className="h-8 w-auto"
-                        src="/logo.svg"
-                        alt="Workflow"
+                        src="/logo.png"
+                        alt="Logo..."
                       />
+                      <Link href="https://github.com/AntonSk98/Gnomepy">
+                        <a target="_blank" rel="noreferrer">
+                          <h1 className="text-xl sm:text-2xl ml-2 font-extrabold text-white truncate">Gnomepy</h1>
+                        </a>
+                      </Link>
                     </div>
                     <nav className="mt-5 px-2 space-y-1">
                       <CreateTicketModal />
-                      {navigation.map((item) => (
-                        <Link key={item.name} href={item.href}>
-                          <a
-                            className={classNames(
-                              item.current
-                                ? "bg-green-500 text-white"
-                                : "text-white hover:bg-green-400 hover:text-white",
-                              "group flex items-center px-2 py-2 text-sm font-medium rounded-xl"
-                            )}
-                          >
-                            <item.icon
-                              className="text-white mr-3 flex-shrink-0 h-6 w-62"
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                          </a>
-                        </Link>
-                      ))}
-                    </nav>
-                    <div
-                      className={
-                        session.user.isAdmin === true
-                          ? "flex flex-col mt-8 px-3 "
-                          : "hidden"
-                      }
-                    >
-                      <h3
-                        className="px-2 text-xs font-semibold text-white uppercase tracking-wider"
-                        id="projects-headline"
-                      >
-                        Admin
-                      </h3>
-                      <div
-                        className="mt-1 space-y-1"
-                        aria-labelledby="projects-headline"
-                      >
-                        {secondaryNavigation.map((item) => (
-                          <Link key={item.name} href={item.href}>
-                            <a
-                              className={classNames(
-                                item.current
-                                  ? "bg-green-500 text-white"
-                                  : "text-white hover:bg-green-400 hover:text-white",
-                                "group flex items-center px-2 py-2 text-sm font-medium rounded-xl"
-                              )}
-                            >
-                              <span className="truncate">{item.name}</span>
-                            </a>
-                          </Link>
-                        ))}
-                        <a
-                          href="https://ko-fi.com/L3L0AA4YE"
-                          target="_blank"
-                          passHref
-                        >
-                          <img
-                            className="px-3 py-2 h-12"
-                            height="36"
-                            src="/kofi-white.png"
-                            border="0"
-                            alt="Buy Me a Coffee at ko-fi.com"
-                          />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex-shrink-0 flex-col flex p-4">
-                    <span className="hidden sm:inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-500">
-                      <span className="text-sm font-medium leading-none text-white uppercase">
-                        {session.user.name[0]}
-                      </span>
-                    </span>
-                    <p className="text-base font-medium text-white">
-                      {session.user.name}
-                    </p>
-                    <Link href="/settings">
-                      <a className="flex-shrink-0 group block">
-                        <div className="flex items-center">
-                          <div className="">
-                            <p className="text-sm font-medium text-white">
-                              View profile
-                            </p>
+                      <Link href={navigationPaths.dashboard}>
+                        <div className={isCurrentPath(navigationPaths.dashboard) ? "bg-green-600 rounded-xl" : ""}>
+                          <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                            <IdentificationIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></IdentificationIcon>
+                            Dashboard
                           </div>
                         </div>
-                      </a>
-                    </Link>
+                      </Link>
+
+                      <Link href={navigationPaths.openTickets}>
+                        <div className={isCurrentPath(navigationPaths.openTickets) ? "bg-green-600 rounded-xl" : ""}>
+                          <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                            <ExclamationCircleIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></ExclamationCircleIcon>
+                            My pending issues
+                          </div>
+                        </div>
+                      </Link>
+
+                      <Link href={navigationPaths.allTickets}>
+                        <div className={isCurrentPath(navigationPaths.allTickets) ? "bg-green-600 rounded-xl" : ""}>
+                          <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                            <ArchiveIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></ArchiveIcon>
+                            All issues
+                          </div>
+                        </div>
+                      </Link>
+
+                      <Link href={navigationPaths.notebook}>
+                        <div className={isCurrentPath(navigationPaths.notebook) ? "bg-green-600 rounded-xl" : ""}>
+                          <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                            <PencilIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></PencilIcon>
+                            Notes
+                          </div>
+                        </div>
+                      </Link>
+
+                      {session.user.isAdmin ? (
+                          <Link href={administrationNavigationPaths.users}>
+                            <div className={isCurrentPath(administrationNavigationPaths.users) ? "bg-green-600 rounded-xl" : ""}>
+                              <div className={"group flex items-center px-2 py-2 text-sm font-medium rounded-xl cursor-pointer hover:bg-gray-800 outline-none duration-300 text-white"}>
+                                <UserCircleIcon className="text-white mr-3 flex-shrink-0 h-6 w-62" aria-hidden={true}></UserCircleIcon>
+                                User management
+                              </div>
+                            </div>
+                          </Link>
+                      ) : null}
+
+                    </nav>
+                  </div>
+                  <div className="flex-shrink-0 flex border-t-2 p-4">
+                    <div className="flex-shrink-0 w-full group block">
+                      <div className="flex items-center">
+                        <div>
+                        <span className="hidden sm:inline-flex items-center justify-center h-8 w-8 rounded-full bg-green-600">
+                          <span className="text-sm font-medium leading-none text-white uppercase">
+                            {session.user.name[0]}
+                          </span>
+                        </span>
+                        </div>
+                        <div className="ml-3">
+                          <div className="text-lg font-medium text-white cursor-default pb-2">
+                            <span className="font-bold text-green-600">{session.user.name}</span>
+                          </div>
+                          <Link href="/settings">
+                          <span className="text-base font-medium text-white hover:text-green-600 duration-300 cursor-pointer">
+                              View profile
+                          </span>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </Transition.Child>
@@ -254,7 +201,7 @@ export default function SideLayout({ children }) {
               <div className="flex flex-col h-0 flex-1 bg-emerald-800">
                 <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                   <div className="flex flex-shrink-0 px-4 align-middle flex-row">
-                    <img className="h-8 w-auto" src="/logo.png" alt="Workflow"/>
+                    <img className="h-8 w-auto" src="/logo.png" alt="Logo"/>
                     <Link href="https://github.com/AntonSk98/Gnomepy">
                       <a target="_blank" rel="noreferrer">
                         <h1 className="text-2xl ml-2 hover:text-green-600 font-extrabold text-white duration-300">Gnomepy</h1>
