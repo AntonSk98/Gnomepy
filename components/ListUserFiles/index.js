@@ -68,7 +68,7 @@ export default function ListUserFiles({ uploaded, setUploaded }) {
             return (
               <div className="w-full" key={file.id}>
                 <ul>
-                  <li>
+                  <li key={file.id}>
                     <span>{file.filename}</span>
                     <button
                       onClick={() => downloadFile(file)}

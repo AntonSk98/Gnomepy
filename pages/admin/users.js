@@ -243,8 +243,8 @@ export default function Users() {
         tabIndex="0"
       >
         <div className="py-6">
-          <div className="flex flex-row max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <h1 className="text-2xl font-bold text-emerald-800 cursor-default">
+          <div className="flex flex-row max-w-7xl mx-auto px-4 sm:px-6 md:px-8 flex-wrap">
+            <h1 className="text-xl sm:text-2xl font-bold text-emerald-800 cursor-default">
               User management
             </h1>
             <div className="ml-4">
@@ -281,9 +281,9 @@ export default function Users() {
                     {data.users.map((user) => (
                       <div key={user.id} className="flex flex-col text-center bg-white rounded-lg shadow mt-4">
                         <div className="flex-1 flex flex-col p-8">
-                          <h3 className=" text-gray-900 text-sm font-medium">{user.name}</h3>
+                          <h3 className=" text-gray-900 text-sm font-medium truncate">{user.name}</h3>
                           <dl className="mt-1 flex-grow flex flex-col justify-between">
-                            <dd className="text-gray-500 text-sm">{user.email}</dd>
+                            <dd className="text-gray-500 text-sm truncate">{user.email}</dd>
                             <dd className="mt-3">
                               <span className="px-2 py-1 text-green-800 text-xs font-medium bg-green-100 rounded-full">
                                 {user.isAdmin ? "admin" : "user"}

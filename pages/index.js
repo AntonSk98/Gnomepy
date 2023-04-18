@@ -122,7 +122,7 @@ export default function Dashboard() {
         <div>
           <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
             {stats.map((item) => (
-              <Link href={item.href}>
+              <Link href={item.href} key={item.href}>
                 <div key={item.name} className="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6 cursor-pointer hover:bg-slate-200 duration-300">
                   <dt className="text-sm font-bold text-emerald-800 truncate">
                     {item.name}

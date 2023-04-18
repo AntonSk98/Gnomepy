@@ -284,7 +284,7 @@ export default function CreateTicketModal() {
                           buttonStyle="solid"
                           value={priority}
                           onChange={(e) => setPriority(e.target.value)}
-                          className="mx-auto justify-center space-x-4"
+                          className="mx-auto justify-center"
                         >
                           <Radio.Button value="Low">Low</Radio.Button>
                           <Radio.Button value="Normal">Normal</Radio.Button>
@@ -293,7 +293,7 @@ export default function CreateTicketModal() {
                       </div>
                     </div>
 
-                    <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense mx-auto ">
+                    <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense mx-auto flex-wrap">
                       <button
                         disabled={!isSaveButtonEnabled || isLoading}
                         onClick={() => {
@@ -308,7 +308,7 @@ export default function CreateTicketModal() {
                             animationDuration="1"
                             width="20"
                             visible={true}
-                        />: <span>Report issue</span> }
+                        />: <span>Report</span> }
                       </button>
                       <button
                         disabled={isLoading}
@@ -317,7 +317,7 @@ export default function CreateTicketModal() {
                         }}
                         type="button"
                         className="mt-3 w-1/2  mx-auto inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-800 hover:text-white duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm disabled:cursor-not-allowed">
-                        Cancel
+                        <span>Cancel</span>
                       </button>
                     </div>
                   </div>

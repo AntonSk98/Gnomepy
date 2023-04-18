@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 
-export default function TicketsMobileList({ tickets }) {
+export default function TicketsMobileList({ tickets, extended }) {
   const high = "bg-red-100 text-red-800";
   const low = "bg-blue-100 text-blue-800";
   const normal = "bg-green-100 text-green-800";
@@ -55,21 +55,27 @@ export default function TicketsMobileList({ tickets }) {
 
             return (
               <div className="flex justify-start" key={ticket.id}>
-                <div className="w-full mb-2 border">
+                <div className="w-full mb-2 border-2 rounded-xl border-gray-200 drop-shadow-lg">
                   <div className="px-4 py-4">
-                    <div>
-                      <h1 className="font-semibold leading-tight text-2xl text-gray-800 hover:text-gray-800 ml-1">
-                        {ticket.title}
-                      </h1>
-                      <p className="px-2">Name of caller: {ticket.name}</p>
+                    <div className="w-3/4 truncate">
+                      <span className="text-bold text-emerald-800">Title: </span>
+                      <span className="font-semibold leading-tight text-lg text-gray-800">{ticket.title}</span>
                     </div>
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge}`}
-                    >
+                    <div className={!extended ? "hidden mb-1" : "mb-1"}>
+                      <span className="font-bold text-emerald-800">Status: </span>
+                      <span>{ticket.isCompleted ? 'Resolved' : 'Pending'}</span>
+                    </div>
+                    <div className={!extended ? "hidden mb-1" : "mb-1"}>
+                      <span className="font-bold text-emerald-800">Assigned to: </span>
+                      <span>{ticket?.assignedTo?.name}</span>
+                    </div>
+                    <div>
+                      <span className="font-bold text-emerald-800">Priority: </span>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge}`}>
                       {ticket.priority}
                     </span>
-                    <p className="text-gray-900 m-2">{ticket.issue}</p>
-                    <div className="text-gray-700 text-sm font-bold mt-2">
+                    </div>
+                    <div className="font-bold mt-2">
                       <Link href={`ticket/${ticket.id}`} className="">
                         View Full Ticket
                       </Link>

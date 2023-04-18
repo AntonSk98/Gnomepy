@@ -90,7 +90,7 @@ export default function ListTodo() {
                 return (
                   <div className="flex flex-col" key={todo.id}>
                     <ul>
-                      <li>
+                      <li key={todo.id}>
                         <span className={todo.done ? "line-through" : ""}>
                           {todo.text}
                         </span>

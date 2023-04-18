@@ -297,7 +297,7 @@ export default function TicketHitory() {
             <Table columns={columns} data={data.tickets} />
           </div>
           <div className="sm:hidden">
-            <TicketsMobileList tickets={data.tickets} />
+            <TicketsMobileList tickets={data.tickets} extended={true}/>
           </div>
         </div>
       )}
