@@ -1,6 +1,7 @@
 FROM node:14-alpine AS deps
 
 RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache python3 py3-pip make g++
 
 # Copy over ONLY the package.json and yarn.lock
 # so that this `yarn install` layer is only recomputed
@@ -27,7 +28,6 @@ RUN yarn build
 RUN rm -rf node_modules
 RUN yarn install --production --frozen-lockfile --ignore-scripts --prefer-offline
 RUN yarn remove bcrypt && yarn add bcrypt
-RUN yarn add --dev typescript @types/node --network-timeout 1000000 && yarn add prisma -g --network-timeout 1000000
 
 
 FROM node:14-alpine

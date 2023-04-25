@@ -19,7 +19,7 @@ export default function Login({ csrfToken }) {
                 <img
                     className="mx-auto h-36 w-auto"
                     src="/logo.png"
-                    alt="peppermint.sh logo"
+                    alt="Gnomepy logo"
                 />
               </a>
             </div>
