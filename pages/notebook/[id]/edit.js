@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 
@@ -19,7 +19,7 @@ export default function ViewNoteBook() {
     const res = await fetch(`/api/v1/note/${id}`);
     return res.json();
   }
-  const { data, status, error } = useQuery("edit", getMarkdown);
+  const { data, status, error, refetch } = useQuery("edit", getMarkdown);
 
   const [title, setTitle] = useState('');
   const [note, setNote] = useState('');
@@ -35,13 +35,12 @@ export default function ViewNoteBook() {
         note,
       }),
     });
+    await refetch();
   }
 
-  React.useEffect(() => {
-    if (!title && data) {
-      setNote(data.data.note);
-      setTitle(data.data.title);
-    }
+  useEffect(() => {
+    setNote(data?.data?.note);
+    setTitle(data?.data?.title);
   }, [data]);
 
   return (
