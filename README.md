@@ -47,6 +47,7 @@ services:
 ```
 #### Default credentials for first log in:
 **User:** admin@admin.com
+<br>
 **Password:** 1234
 
 ## Motivation
