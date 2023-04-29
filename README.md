@@ -1,23 +1,4 @@
-<h1 align="center">Welcome to Peppermint Ticket Management 🍵</h1>
-<p align="center">
-  <a href='https://ko-fi.com/peppermintsh' target='_blank'><img height='35' style='border:0px;height:46px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
- </p>
-<p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.2-blue.svg?cacheSeconds=2592000" />
-  <a target="_blank">
-    <img alt="Github Stars: " src="https://img.shields.io/github/stars/jwandrews99/winter?style=social" />
-  </a>
-  <img src="https://img.shields.io/docker/pulls/pepperlabs/peppermint" />
-</p>
-<p align="center">
-    <img src="https://peppermint.sh/images/logo_green.svg" alt="Logo" width="350px" >
-</p>
-<p align="center">This project is supported by:</p>
-<p align="center">
-  <a href="https://www.digitalocean.com/">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px">
-  </a>
-</p># Gnomepy
+# Gnomepy
 Ticket Management System – a comprehensive one-stop solution for managing all your household and internal requests and issues.
 
 ## Introduction
@@ -141,5 +122,18 @@ services:
 3. Boost my portfolio with practical projects that improve the daily life and make the life easier.
 
 ## Application in action
-
+Log in view
+![Log in view](assets/log_in.PNG)
+Dashboard page
+![Dashboard page](assets/dashboard.PNG)
+All issues overview
+![All issues overview](assets/all_issues.PNG)
+New issue modal
+![New issue modal](assets/new_issue.PNG)
+Notes tab
+![Notes tab](assets/notes.PNG)
+User management page
+![User management page](assets/user_managements.PNG)
+Profile settings and management
+![Profile settings and management](assets/profile_management.PNG)
 ##### **Remark:** This project is inspired by [Peppermint](https://github.com/Peppermint-Lab/peppermint). 
