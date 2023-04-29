@@ -45,76 +45,7 @@ services:
       DB_HOST: postgres
       BASE_URL: "http://localhost:5000"
 ```
-## Deploying locally with Nginx
-Nginx configuration - gnomepy.conf
 
-After deployment, the application can be accessed locally at gnomepy.de
-```
-events {
-}
-
-http {
-        server {
-                listen 80;
-                listen [::]:80;
-                server_name gnomepy.de;
-                add_header Strict-Transport-Security "max-age=15552000; includeSubDomains" always;
-
-                location / {
-                        proxy_pass http://client:5000;
-                        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503;
-                        proxy_set_header Host $host;
-                        proxy_set_header X-Real-IP $remote_addr;
-                        proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
-                        proxy_set_header X-Forwarded-Proto https;
-                        proxy_redirect off;
-                        proxy_read_timeout 5m;
-                }
-                client_max_body_size 10M;
-        }
-}
-```
-Docker-compose file
-```
-version: "3.1"
-
-services:
-  postgres:
-    container_name: postgres
-    image: postgres:latest
-    restart: always
-    volumes:
-      - ./gnomepy/db:/data/db
-    environment:
-      POSTGRES_USER: ansk98
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: gnomepy
-
-
-  nginx:
-    container_name: nginx
-    image: nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./gnomepy.conf:/etc/nginx/nginx.conf:ro
-  client:
-    container_name: gnomepy
-    image: antonsk98/gnomepy:latest
-    links:
-      - "nginx:gnomepy.de"
-    ports:
-      - 5000:5000
-    restart: on-failure
-    depends_on:
-      - postgres
-      - nginx
-    environment:
-      PORT: 5000
-      DB_USERNAME: ansk98
-      DB_PASSWORD: 1234
-      DB_HOST: postgres
-```
 ## Motivation
 1. Unlock the potential for growth and development by exploring exciting technologies like React and Next.js.
 2. Embrace the challenge of learning something new and take your skills to the next level!
