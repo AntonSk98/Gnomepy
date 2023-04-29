@@ -45,7 +45,7 @@ services:
       DB_HOST: postgres
       BASE_URL: "http://localhost:5000"
 ```
-Default credentials for first log in:
+#### Default credentials for first log in:
 **User:** admin@admin.com
 **Password:** 1234
 
