@@ -45,6 +45,9 @@ services:
       DB_HOST: postgres
       BASE_URL: "http://localhost:5000"
 ```
+Default credentials for first log in:
+**User:** admin@admin.com
+**Password:** 1234
 
 ## Motivation
 1. Unlock the potential for growth and development by exploring exciting technologies like React and Next.js.
