@@ -1,5 +1,5 @@
 # Gnomepy
-Gnomepy is a comprehensive one-stop solution for managing all your household and internal requests and issues.
+Gnomepy is a comprehensive one-stop solution for managing all your household requests and issues.
 
 ## Introduction
 This web application is a viable alternative to well-known services like Freshdesk, offering a self-hosted solution for managing customer inquiries and support requests.
